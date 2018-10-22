@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/default.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<div class="wraper">
+		<div class="header">
+			<h3
+				style="text-align: center; padding: 10px; font-weight: bold; color: blue;">
+				RECORDING MEETING SYSTEM</h3>
+		</div>
+		<div class="content">
+			<div class="content_left">
+
+				<div class="profile">
+					<div class="information">
+						<div class="image_profile">
+							<img th:src="@{/images/login.jpg}"
+								class="img-responsive center-block" alt="Logo" />
+								
+						</div>
+						<div class="nameuser">
+						<label>ND.Thắng</label>
+						</div>
+						
+						<div class="add_room">
+							<button type="button" style="margin-right: 10px;" class="btn btn-info" title="Join vào cuộc họp"><i class="fa fa-sign-in" aria-hidden="true"></i></button>
+							<button type="button" class="btn btn-success" title="Tạo cuộc họp mới"><i class="fa fa-plus" aria-hidden="true"></i></button>
+						</div>
+					</div>
+					<div class="searchRoom" style="clear: both; margin-top: 10px;">
+						<input type="text" id="txtSearch" class="form-control" placeholder="Nhập vào tên cuộc họp" style="width: 80%; float: left;">
+						<div style="width: 15%; display: inline-block; text-align: right; padding-left: 2px;">
+							<button type="button" class="btn btn-primary" title="Tìm kiếm" style="width: -webkit-fill-available;"><i class="fa fa-search"></i></button>
+						</div>
+						
+					</div>
+
+				</div>
+				<div id="list_room_area">
+					<ul id="listRoom">
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">t</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp thường niên</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">H</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp lớp cấp 1</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+						<li class="meetingroom">
+							<i style="background-color: rgb(255, 152, 0);">G</i>
+							<span class="style_time">10:43:23 - 12:45:12</span>
+							<p>Họp hội đồng nhân dân phường Trương Định nhiệm kì 2015 - 2018</p>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+			<div class="content_right"></div>
+		</div>
+		<div class="footer" style="text-align: center; padding-top: 5px; color: blue;">
+			<h4>Hệ thống ghi biển bản cuộc họp. Phát triển bởi nhóm DSD_09</h4>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -22,6 +23,20 @@ public class LoginController {
     @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
     public ModelAndView login(){
         ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value={"/", "/Default"}, method = RequestMethod.GET)
+    public String getDefault(){
+        
+        return "Default";
+    }
+    
+    @RequestMapping(value={"/xulilogin"}, method = RequestMethod.GET)
+    public ModelAndView xulilogin(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("status","Login fail");
         modelAndView.setViewName("login");
         return modelAndView;
     }
@@ -46,7 +61,8 @@ public class LoginController {
                             "There is already a user registered with the email provided");
         }
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registration");
+        	modelAndView.addObject("successMessage", "User has been registered successfully");
+            modelAndView.setViewName("login");
         } else {
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
