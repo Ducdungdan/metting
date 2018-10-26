@@ -32,40 +32,43 @@ public class UserServiceTest {
         userServiceUnderTest = new UserService(mockUserRepository,
                                                mockRoleRepository,
                                                mockBCryptPasswordEncoder);
-        user = User.builder()
-                .id(1)
-                .name("Gustavo")
-                .lastName("Ponce")
-                .email("test@test.com")
-                .build();
-
+        user = new User();
+        user.setFirstName("lv");
+        user.setLastName("Duc");
+        user.setPhone("0372291297");
+        
         Mockito.when(mockUserRepository.save(any()))
                 .thenReturn(user);
-        Mockito.when(mockUserRepository.findByEmail(anyString()))
+        Mockito.when(mockUserRepository.findByUsername(anyString()))
                 .thenReturn(user);
     }
 
     @Test
     public void testFindUserByEmail() {
         // Setup
-        final String email = "test@test.com";
+        final String username = "test";
 
         // Run the test
-        final User result = userServiceUnderTest.findUserByEmail(email);
+        final User result = userServiceUnderTest.findUserByUsername(username);
 
         // Verify the results
-        assertEquals(email, result.getEmail());
+        assertEquals(username, result.getUsername());
     }
 
     @Test
     public void testSaveUser() {
         // Setup
         final String email = "test@test.com";
+        user = new User();
+        user.setFirstName("lv");
+        user.setLastName("Duc");
+        user.setPhone("0372291297");
+        
 
         // Run the test
-        User result = userServiceUnderTest.saveUser(User.builder().build());
+        User result = userServiceUnderTest.saveUser(user);
 
         // Verify the results
-        assertEquals(email, result.getEmail());
+        assertEquals(email, result.getUsername());
     }
 }

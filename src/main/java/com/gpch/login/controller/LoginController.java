@@ -1,9 +1,13 @@
 package com.gpch.login.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import com.gpch.login.model.User;
 import com.gpch.login.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -36,26 +41,25 @@ public class LoginController {
 //        return modelAndView;
 //    }
 //
-//    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-//    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
-//        ModelAndView modelAndView = new ModelAndView();
-//        User userExists = userService.findUserByEmail(user.getEmail());
-//        if (userExists != null) {
-//            bindingResult
-//                    .rejectValue("email", "error.user",
-//                            "There is already a user registered with the email provided");
-//        }
-//        if (bindingResult.hasErrors()) {
-//            modelAndView.setViewName("registration");
-//        } else {
-//            userService.saveUser(user);
-//            modelAndView.addObject("successMessage", "User has been registered successfully");
-//            modelAndView.addObject("user", new User());
-//            modelAndView.setViewName("registration");
-//
-//        }
-//        return modelAndView;
-//    }
+    
+    @RequestMapping(value = "/api/registration", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> createNewUser(@Valid User user, BindingResult bindingResult) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+        User userExists = userService.findUserByUsername(user.getUsername());
+        
+	
+		if (userExists != null) {
+			result.put("code", 400);
+			result.put("message", "There is already a user registered with the username provided");
+		} else {
+        	userService.saveUser(user);
+        	result.put("code", 200);
+        	result.put("message", "User has been registered successfully");
+        }
+        
+        return result;
+    }
 //
 //    @RequestMapping(value="/admin/home", method = RequestMethod.GET)
 //    public ModelAndView home(){
