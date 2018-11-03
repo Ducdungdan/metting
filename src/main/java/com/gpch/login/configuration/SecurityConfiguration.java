@@ -2,14 +2,23 @@ package com.gpch.login.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import com.gpch.login.filtes.JwtAuthenticationTokenFilter;
+import com.gpch.login.rest.CustomAccessDeniedHandler;
+import com.gpch.login.rest.RestAuthenticationEntryPoint;
 
 import javax.sql.DataSource;
 
@@ -40,26 +49,36 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(bCryptPasswordEncoder);
     }
 
+    @Bean
+    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() throws Exception {
+      JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter = new JwtAuthenticationTokenFilter();
+      jwtAuthenticationTokenFilter.setAuthenticationManager(authenticationManager());
+      return jwtAuthenticationTokenFilter;
+    }
+    @Bean
+    public RestAuthenticationEntryPoint restServicesEntryPoint() {
+      return new RestAuthenticationEntryPoint();
+    }
+    @Bean
+    public CustomAccessDeniedHandler customAccessDeniedHandler() {
+      return new CustomAccessDeniedHandler();
+    }
+    @Bean
     @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+      return super.authenticationManager();
+    }
     protected void configure(HttpSecurity http) throws Exception {
-
-        http.
-                authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/api/login").permitAll()
-                .antMatchers("/api/registration").permitAll()
-                .antMatchers("/registration").permitAll()
-                .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
-                .authenticated().and().csrf().disable().formLogin()
-                .loginPage("/login").failureUrl("/login?error=true")
-                .defaultSuccessUrl("/admin/home")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/").and().exceptionHandling()
-                .accessDeniedPage("/access-denied");
+      // Disable crsf cho đường dẫn /rest/**
+      http.csrf().ignoringAntMatchers("/rest/**");
+      http.authorizeRequests().antMatchers("/rest/login**").permitAll();
+      http.antMatcher("/rest/**").httpBasic().authenticationEntryPoint(restServicesEntryPoint()).and()
+          .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+          .antMatchers(HttpMethod.GET, "/rest/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+        .antMatchers(HttpMethod.POST, "/rest/**").access("hasRole('ROLE_ADMIN')")
+        .antMatchers(HttpMethod.DELETE, "/rest/**").access("hasRole('ROLE_ADMIN')").and()
+        .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
     }
 
     @Override

@@ -42,5 +42,28 @@ public class UserService{
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         return userRepository.save(user);
     }
+    
+    public User findByUsernameAndPassword(String username, String password) {
+    	User user = userRepository.findByUsername(username);
+    	
+    	Boolean check = bCryptPasswordEncoder.matches(password, user.getPassword());
+    	
+    	if(check) {
+    		return user;
+    	} else {
+    		return null;
+    	}
+    	
+//    	String passwordEncoder = bCryptPasswordEncoder.encode(password);
+//    	return userRepository.findByUsernameAndPassword(username, passwordEncoder);
+    	
+    }
+    
+    public User loadUserByUsername(String username) {
+        
+    	return userRepository.findByUsername(username);
+    	
+    }
+    
 
 }

@@ -15,6 +15,11 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Set;
+import org.springframework.security.core.GrantedAuthority;
+import java.util.List;
+import java.util.ArrayList;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 
 @Data
 @Builder
@@ -24,7 +29,12 @@ import java.util.Set;
 @Table(name = "user")
 public class User implements Serializable{
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1068445791804691951L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private int id;
@@ -189,5 +199,13 @@ public class User implements Serializable{
 	public void setMemberRooms(Set<RoomUser> memberRooms) {
 		this.memberRooms = memberRooms;
 	}
-
+	
+	public List<GrantedAuthority> getAuthorities() {
+	    List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+	    for (Role role : roles) {
+	    	
+	      authorities.add(new SimpleGrantedAuthority(role.getRole()));
+	    }
+	    return authorities;
+	  }
 }
