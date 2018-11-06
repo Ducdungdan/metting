@@ -1,7 +1,10 @@
 package com.gpch.login.service;
 
 import com.gpch.login.model.Role;
+import com.gpch.login.model.RoomRole;
+import com.gpch.login.model.RoomUser;
 import com.gpch.login.model.User;
+import com.gpch.login.model.Room;
 import com.gpch.login.repository.RoleRepository;
 import com.gpch.login.repository.UserRepository;
 
@@ -11,8 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service("userService")
 public class UserService{
@@ -64,6 +72,54 @@ public class UserService{
     	return userRepository.findByUsername(username);
     	
     }
+    
+    public List<Map<String, Object>> getRoomsJoined(String username) {
+		User user = userRepository.findByUsername(username);
+		List<Map<String, Object>> rooms = new ArrayList<Map<String, Object>>();
+		if(user==null) {
+			return null;
+		} else {
+			
+			Set<RoomUser> roomsUser = user.getMemberRooms();
+			for(RoomUser roomUser: roomsUser) {
+				if(roomUser.getDeleted() != 1) {
+					Map<String, Object> room = new HashMap<String, Object>();
+					Map<String, Object> own = new HashMap<String, Object>();
+					List<Map<String, Object>> roles = new ArrayList<Map<String, Object>>();
+					
+					Room r = roomUser.getRoom();
+					
+					room.put("id", r.getId());
+					room.put("code", r.getCode());
+					room.put("name", r.getName());
+					room.put("maxUser", r.getMaxUser());
+					room.put("number", r.getNumber());
+					room.put("active", r.getActive());
+					
+					own.put("username", roomUser.getUser().getUsername());
+					own.put("firstName", roomUser.getUser().getFirstName());
+					own.put("lastName", roomUser.getUser().getLastName());
+					
+					Set<RoomRole> rls = roomUser.getRoles();
+					
+					for(RoomRole rl: rls) {
+						Map<String, Object> rlm = new HashMap<String, Object>();
+						rlm.put("code", rl.getCode());
+						rlm.put("name", rl.getName());
+						roles.add(rlm);
+					}
+					
+					room.put("own", own);
+					
+					room.put("roles", roles);
+					
+					rooms.add(room);
+				}
+			}
+		}
+		
+		return rooms;
+	}
     
 
 }
