@@ -1,5 +1,7 @@
 package com.gpch.login.model;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "role_id")
@@ -23,6 +25,10 @@ public class Role {
     
 	public int getId() {
 		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public String getRole() {
