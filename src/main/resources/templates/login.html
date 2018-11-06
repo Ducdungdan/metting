@@ -71,7 +71,7 @@
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	       <form action='dangkytaikhoan' method="post" name="user" id='submit_register'>
+	       <form action="javascript:void(0);" method="post" name="user" id='submit_register'>
 	
 			<div class="form-group">
 			    <label for="ip_firstname">First Name</label><span class="star">*</span>
@@ -89,12 +89,6 @@
 			    <label for="ip_phone">Phone Number</label><span class="star">*</span>
 			    <input type="text" class="form-control" id="ip_phone" name='sdt' placeholder="Nhập vào số điện thoại" maxlength="11">
 			    <small id="status_phone" class="form-text text-muted status_error" style="color: red;"></small>
-			  </div>
-			  
-			  <div class="form-group">
-			    <label for="ip_address">Address</label>
-			    <input type="text" class="form-control" id="ip_address" name='address' placeholder="Nhập vào địa chỉ">
-			    <small id="status_address" class="form-text text-muted status_error" style="color: red;"></small>
 			  </div>
 			  
 			 <div class="form-group">
@@ -116,7 +110,8 @@
 			    <small id="status_repassword" class="form-text text-muted status_error" style="color: red;"></small>
 			 </div>
 			 
-			 <button type="submit" class="btn btn-primary">Đăng ký</button>
+			 <button type="submit" class="btn btn-primary" onclick="registration()">Đăng ký</button>
+			 <h3 id="registration_message" style="text-align: center;"></h3>
 			 
 		</form>
 	      </div>

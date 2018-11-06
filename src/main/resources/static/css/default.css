@@ -130,3 +130,35 @@ body {
 .style_time{
 	font-style: italic;
 }
+
+.meetingroom:hover {
+	background: antiquewhite;
+    border-radius: 33px;
+    cursor: pointer;
+}
+
+.lstSpeaker{
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	background: aliceblue;
+    height: 134px;
+    overflow: auto;
+}
+
+.user_span {
+	background: blanchedalmond;
+    padding: 6px;
+    border-radius: 13px;
+    display: inline-block;
+    margin: 1px;
+}
+
+.chosen-container-single {
+	width: -webkit-fill-available;
+}
+
+.lst_reporter{
+	height: 81px;
+    background: aliceblue;
+    border-radius: 7px;
+    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+}

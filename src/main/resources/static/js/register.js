@@ -28,7 +28,6 @@ $('#ip_address').blur(function(){
 
 $('#ip_username').blur(function(){
 	$('#status_username').text("");
-	checkTaiKhoanExist();
 	 validate_Username();
 });
 
@@ -78,7 +77,7 @@ validate_Phone = function(){
 		$('#status_phone').text('[Số điện thoại] không được bỏ trống');
 		status = false;
 	}else{
-		if(isNaN(sdt)){
+		if(isNaN(phone)){
 		$('#status_phone').text('Số điện thoại không không hợp lệ, hãy kiểm tra lại');
 		status = false;
 		}
@@ -86,18 +85,6 @@ validate_Phone = function(){
 	return status;
 }
 
-
-
-//validate dia chi
-validate_Address = function(){
-	var status = true;
-	var address = $('#ip_address').val();
-	if(address.trim().length == 0){
-		$('#status_address').text("[Địa chỉ] không được bỏ trống");
-		status = false;
-	}
-	return status;
-}
 
 //validate ten dang nhap
 validate_Username = function(){
@@ -158,28 +145,29 @@ validate = function(){
 	
 	var status3 = validate_Phone();
 	
-	var status4 = validate_Address();
-	
 	var status5 = validate_Username();
 	
 	var status6 = validate_Password();
 	
 	var status7 = validate_Repassword();
 		
-	return(status1 && status2 && status3 && status4 && status5 && status6 && status7);
+	return(status1 && status2 && status3 && status5 && status6 && status7);
 	
 }
 
-checkTaiKhoanExist = function (){
+registration = function(){
 	$.ajax({
-		url:'findusername',
-		type:'get',
-		data:{taikhoan:$('#ip_username').val()},
+		url:'http://192.168.1.6:8080/api/registration',
+		type:'post',
+		data:{username:$('#ip_username').val(), password:$('#ip_password').val(), firstName:$('#ip_firstname').val(), lastName:$('#ip_lastname').val(), phone:$('#ip_phone').val()},
 		success: function(response){
-			var status = response.status;
-			$('#statusUsername').val(status);
-			if(status == 1){
-				$('#status_username').text("Tên đăng nhập này đã tồn tại trong hệ thống, vui lòng chọn tên đăng nhập khác");
+			var code = response.code;
+			if(code == 0){
+				$("#registration_message").text("Đăng ký thành công ! Bạn vui lòng quay lại trang đăng nhập để sử dụng hệ thống");
+				$("#registration_message").css("color","chartreuse");
+			}else {
+				$("#registration_message").text("Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác");
+				$("#registration_message").css("color","red");
 			}
 		}
 	});

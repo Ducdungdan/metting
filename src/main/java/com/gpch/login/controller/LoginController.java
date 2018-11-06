@@ -33,6 +33,30 @@ public class LoginController {
         return "Default";
     }
     
+    @RequestMapping(value={"/Meeting"}, method = RequestMethod.GET)
+    public String getMeeting(){
+        
+        return "Meeting";
+    }
+    
+    @RequestMapping(value={"/userinformation"}, method = RequestMethod.GET)
+    public String getUserinformation(){
+        
+        return "userinformation";
+    }
+    
+    @RequestMapping(value={"/admin/cruduser"}, method = RequestMethod.GET)
+    public String geCRUDUser(){
+        
+        return "admin/cruduser";
+    }
+    
+    @RequestMapping(value={"/meetingdetails"}, method = RequestMethod.GET)
+    public String getMeetingDetails(){
+        
+        return "meetingdeatail";
+    }
+    
     @RequestMapping(value={"/xulilogin"}, method = RequestMethod.GET)
     public ModelAndView xulilogin(){
         ModelAndView modelAndView = new ModelAndView();
