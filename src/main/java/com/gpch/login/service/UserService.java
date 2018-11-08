@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Service("userService")
+@Service("UserService")
 public class UserService{
-
+	@Autowired
     private UserRepository userRepository;
+	@Autowired
     private RoleRepository roleRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -96,9 +97,9 @@ public class UserService{
 					room.put("number", r.getNumber());
 					room.put("active", r.getActive());
 					
-					own.put("username", roomUser.getUser().getUsername());
-					own.put("firstName", roomUser.getUser().getFirstName());
-					own.put("lastName", roomUser.getUser().getLastName());
+					own.put("username", roomUser.getRoom().getUser().getUsername());
+					own.put("firstName", roomUser.getRoom().getUser().getFirstName());
+					own.put("lastName", roomUser.getRoom().getUser().getLastName());
 					
 					Set<RoomRole> rls = roomUser.getRoles();
 					
