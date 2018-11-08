@@ -1,0 +1,14 @@
+.time_class {
+	width: 22%;
+    font-size: 13px;
+    padding: 1px;
+    display: inline-block;
+}
+
+.user_span {
+	background: blanchedalmond;
+    padding: 6px;
+    border-radius: 13px;
+    display: inline-block;
+    margin: 1px;
+}
