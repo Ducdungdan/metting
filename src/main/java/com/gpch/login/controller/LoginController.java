@@ -31,15 +31,29 @@ public class LoginController {
     
     @Autowired
     private JwtService jwtService;
+
+    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
+    public ModelAndView login(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/default"}, method = RequestMethod.GET)
+    public ModelAndView navigateToDefault(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("default");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/userinformation"}, method = RequestMethod.GET)
+    public ModelAndView userinformation(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("userinformation");
+        return modelAndView;
+    }
 //
-//    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
-//    public ModelAndView login(){
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("login");
-//        return modelAndView;
-//    }
-//
-//
+//userinformation
 //    @RequestMapping(value="/registration", method = RequestMethod.GET)
 //    public ModelAndView registration(){
 //        ModelAndView modelAndView = new ModelAndView();
@@ -84,7 +98,7 @@ public class LoginController {
     	Map<String, Object> result = new HashMap<String, Object>();
     	String message="";
     	HttpStatus httpStatus = null;
-    	int code = 0;
+    	int code = -1;
     	System.out.println("Debug login::" + request.getParameter("username") + ", " +  request.getParameter("password"));
       try {
     	  User user = userService.findByUsernameAndPassword(request.getParameter("username"), request.getParameter("password"));

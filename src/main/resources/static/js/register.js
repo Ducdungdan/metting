@@ -77,8 +77,8 @@ validate_Phone = function(){
 		$('#status_phone').text('[Số điện thoại] không được bỏ trống');
 		status = false;
 	}else{
-		if(isNaN(phone)){
-		$('#status_phone').text('Số điện thoại không không hợp lệ, hãy kiểm tra lại');
+		if(isNaN(phone) || (phone.length != 10 && phone.length != 11)){
+		$('#status_phone').text('Số điện thoại không không hợp lệ, số diện thoại chỉ bao gồm 10 hoặc 11 chữ số. Hãy kiểm tra lại');
 		status = false;
 		}
 	}
@@ -155,21 +155,46 @@ validate = function(){
 	
 }
 
+login = function(){
+	$.ajax({
+		url:'/api/login',
+		type:'post',
+		data:{username:$('#username').val(), password:$('#password').val()},
+		success: function(response){
+			var code = response.code;
+			var token = response.token;
+			if(code == 0){
+				alert("Đăng nhập thành công");
+				window.location.replace("http://localhost:8080/default");
+			}else {
+				$("#status_login").text("Tên đăng nhập hoặc mật khẩu không chính xác");
+			}
+		},
+		 error: function () {
+			 console.log("Server error");
+		 }
+	});
+}
+
+
 registration = function(){
 	$.ajax({
-		url:'http://192.168.1.6:8080/api/registration',
+		url:'/api/registration',
 		type:'post',
 		data:{username:$('#ip_username').val(), password:$('#ip_password').val(), firstName:$('#ip_firstname').val(), lastName:$('#ip_lastname').val(), phone:$('#ip_phone').val()},
 		success: function(response){
 			var code = response.code;
 			if(code == 0){
-				$("#registration_message").text("Đăng ký thành công ! Bạn vui lòng quay lại trang đăng nhập để sử dụng hệ thống");
+				$("#registration_message").text("[Đăng ký thành công ! Bạn vui lòng quay lại trang đăng nhập để sử dụng hệ thống]");
 				$("#registration_message").css("color","chartreuse");
 			}else {
-				$("#registration_message").text("Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác");
+				$("#registration_message").text("[Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác]");
 				$("#registration_message").css("color","red");
 			}
-		}
+		},
+		 error: function () {
+			 console.log("Server error");
+		 }
 	});
 }
 
