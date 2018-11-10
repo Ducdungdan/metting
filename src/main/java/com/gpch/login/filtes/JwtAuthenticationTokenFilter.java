@@ -8,6 +8,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,16 @@ public class JwtAuthenticationTokenFilter extends UsernamePasswordAuthentication
       throws IOException, ServletException {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String authToken = httpRequest.getHeader(TOKEN_HEADER);
+    
+    if(authToken==null) {
+    	Cookie[] cookies = httpRequest.getCookies();
+    	for (int i = 0; i < cookies.length; i++) {
+    		if(cookies[i].getName().equals(TOKEN_HEADER)) {
+    			authToken = cookies[i].getValue();
+    		}
+		}
+    }
+    
     if (jwtService.validateTokenLogin(authToken)) {
       String username = jwtService.getUsernameFromToken(authToken);
       com.gpch.login.model.User user = userService.loadUserByUsername(username);

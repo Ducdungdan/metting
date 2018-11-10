@@ -54,7 +54,7 @@ public class UserService{
     
     public User findByUsernameAndPassword(String username, String password) {
     	User user = userRepository.findByUsername(username);
-    	
+    	if(user==null) return null;
     	Boolean check = bCryptPasswordEncoder.matches(password, user.getPassword());
     	
     	if(check) {
@@ -94,6 +94,7 @@ public class UserService{
 					room.put("code", r.getCode());
 					room.put("name", r.getName());
 					room.put("maxUser", r.getMaxUser());
+					room.put("description", r.getDescription());
 					room.put("number", r.getNumber());
 					room.put("active", r.getActive());
 					

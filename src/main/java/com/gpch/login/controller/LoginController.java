@@ -85,7 +85,7 @@ public class LoginController {
     	Map<String, Object> data = new HashMap<String, Object>();
     	String message="";
     	HttpStatus httpStatus = null;
-    	int code = 0;
+    	int code = 1;
     	System.out.println("Debug login::" + request.getParameter("username") + ", " +  request.getParameter("password"));
       try {
     	  User user = userService.findByUsernameAndPassword(request.getParameter("username"), request.getParameter("password"));
