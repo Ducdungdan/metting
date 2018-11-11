@@ -46,6 +46,13 @@ public class LoginController {
         return modelAndView;
     }
     
+    @RequestMapping(value= {"/meeting"}, method = RequestMethod.GET)
+    public ModelAndView navigateToMeeting(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("meeting");
+        return modelAndView;
+    }
+    
     @RequestMapping(value= {"/userinformation"}, method = RequestMethod.GET)
     public ModelAndView userinformation(){
         ModelAndView modelAndView = new ModelAndView();

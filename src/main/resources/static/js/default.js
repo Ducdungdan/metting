@@ -99,3 +99,20 @@ navigateToDetail = function(idroom){
 	var url = "/meetingdetail?roomid="+idroom;
 	window.location.replace(url);
 }
+
+// tao mot cuoc hop moi
+addRoom = function(name,description, maxuser){
+	$.ajax({
+		url:'/api/room/create',
+		type:'post',
+		data:{name:$('#txtMeetingName').val(), description:$('#txtMeetingDescription').val(), maxUser:$('#txtMaxUser').val()},
+		success: function(response){
+			var code = response.code;
+			var token = response.token;
+			return code;
+		},
+		error: function () {
+			console.log("Server error");
+		}
+	});
+}
