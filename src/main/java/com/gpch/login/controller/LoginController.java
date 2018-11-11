@@ -52,6 +52,13 @@ public class LoginController {
         modelAndView.setViewName("userinformation");
         return modelAndView;
     }
+    
+    @RequestMapping(value= {"/meetingdetail"}, method = RequestMethod.GET)
+    public ModelAndView meetingdetail(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("meetingdetail");
+        return modelAndView;
+    }
 //
 //userinformation
 //    @RequestMapping(value="/registration", method = RequestMethod.GET)

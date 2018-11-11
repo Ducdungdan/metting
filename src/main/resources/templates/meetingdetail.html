@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Chi tiết cuộc họp</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/meeting.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/meetingdetails.css}" />
+	<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<div class="wraper">
+		<div class="header">
+			<h3
+			style="text-align: center; padding: 10px; font-weight: bold; color: blue;">
+		RECORDING MEETING SYSTEM</h3>
+	</div>
+	<div class="content">
+		<div class="content_left">
+			<div class="meeting_infor" style="padding: 12px;">
+				<label>Tên cuộc họp: </label><label id="meeting_name"></label><br>
+				<label>Thời gian bắt đầu: </label><label id="meeting_time"></label>
+			</div>
+			<div class="discusting">
+				<ul class="lstMessage" >
+					
+				</ul>
+			</div>
+			<div class="sending">
+				<button class="btn btn-primary">
+					<i class="fa fa-file-excel-o" aria-hidden="true" onclick="sendMessage1()">  Xuất báo cáo</i> 
+				</button> 
+				<button class="btn btn-secondary">
+					<i class="fa fa-undo" aria-hidden="true" onclick="sendMessage1()">  Quay về trang chủ</i> 
+				</button> 
+			</div>
+		</div>
+		<div class="content_right">
+			<div class="btn_function_area" style="height: auto;">
+				<div class="user_infor" style="text-align: center;">
+					<label>Xin chào: Nguyễn Đình Thắng</label>
+				</div>
+				<div class="function" style="padding: 10px; height: unset; ">
+					<table style="width: 98%;">
+						<col width="30%"></col>
+						<col width="70%"></col>
+						<tr>
+							<th style="height: 80px;">Tên người dùng: </th>
+							<td>
+								<select class="form-control" id="selectuser"></select>
+							</td>
+						</tr>
+						<tr style="height: 80px;">
+							<th>Thời gian từ: </th>
+							<td>
+								<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="24"> (h)
+								<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="60"> (m)
+								<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="60"> (s)
+							</td>
+						</tr>
+						<tr style="height: 80px;">
+							<th>Thời gian đến: </th>
+							<td>
+								<input type="number" class="form-control"  style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="24"> (h)
+								<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="60"> (m)
+								<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="60"> (s)
+							</td>
+						</tr>
+						<tr style=" height: 80px; text-align: center;">
+							<td colspan="2">
+								<button class="btn btn-primary">
+									<i class="fa fa-search" aria-hidden="true">
+										Tìm kiếm
+									</i>
+								</button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="lst_user" style="height: 226px; padding: 10px; overflow: auto;">
+				
+			</div>
+		</div>
+	</div>
+	<div class="footer" style="text-align: center; padding-top: 5px; color: blue;">
+		<h4>Hệ thống ghi biên bản cuộc họp. Phát triển bởi nhóm DSD_09</h4>
+	</div>
+	<script type="text/javascript" th:src="@{/js/meetingdetail.js}"></script>
+</div>
+
+</body>
+</html>

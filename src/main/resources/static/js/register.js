@@ -165,7 +165,7 @@ login = function(){
 			var token = response.token;
 			if(code == 0){
 				alert("Đăng nhập thành công");
-				window.location.replace("http://localhost:8080/default");
+				window.location.replace("/default");
 			}else {
 				$("#status_login").text("Tên đăng nhập hoặc mật khẩu không chính xác");
 			}
