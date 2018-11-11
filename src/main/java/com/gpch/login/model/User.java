@@ -76,16 +76,16 @@ public class User implements Serializable{
     @Column(name = "updated_dtg")
     private Timestamp updatedDTG;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     @OneToMany(cascade=CascadeType.ALL)
-    @JoinColumn(name="user_id", referencedColumnName="created_by")
+    @JoinColumn(name="created_by", referencedColumnName="user_id")
     private Set<Room> ownRooms;
     
     @OneToMany(cascade=CascadeType.ALL)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", referencedColumnName="user_id")
     private Set<RoomUser> memberRooms;
 
 	public int getId() {
@@ -208,4 +208,5 @@ public class User implements Serializable{
 	    }
 	    return authorities;
 	  }
+	
 }

@@ -110,9 +110,10 @@ public class LoginController {
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     public @ResponseBody Map<String, ? extends Object> login(HttpServletRequest request) {
     	Map<String, Object> result = new HashMap<String, Object>();
+    	Map<String, Object> data = new HashMap<String, Object>();
     	String message="";
     	HttpStatus httpStatus = null;
-    	int code = -1;
+    	int code = 1;
     	System.out.println("Debug login::" + request.getParameter("username") + ", " +  request.getParameter("password"));
       try {
     	  User user = userService.findByUsernameAndPassword(request.getParameter("username"), request.getParameter("password"));
@@ -122,6 +123,13 @@ public class LoginController {
           httpStatus = HttpStatus.OK;
           message = httpStatus.name();
           code=0;
+          
+          data.put("username", user.getUsername());
+          data.put("firstName", user.getFirstName());
+          data.put("lastName", user.getLastName());
+          data.put("phone", user.getPhone());
+          result.put("data", data);
+          System.out.println("test getAuthorities::" + user.getRoles().size());
         } else {
         	message = "Wrong userId and password";
         	httpStatus = HttpStatus.BAD_REQUEST;

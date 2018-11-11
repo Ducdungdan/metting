@@ -1,21 +1,27 @@
 package com.gpch.login.filtes;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
+import com.gpch.login.model.Role;
 import com.gpch.login.service.JwtService;
 import com.gpch.login.service.UserService;
 
@@ -30,6 +36,16 @@ public class JwtAuthenticationTokenFilter extends UsernamePasswordAuthentication
       throws IOException, ServletException {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String authToken = httpRequest.getHeader(TOKEN_HEADER);
+    
+    if(authToken==null) {
+    	Cookie[] cookies = httpRequest.getCookies();
+    	for (int i = 0; i < cookies.length; i++) {
+    		if(cookies[i].getName().equals(TOKEN_HEADER)) {
+    			authToken = cookies[i].getValue();
+    		}
+		}
+    }
+    
     if (jwtService.validateTokenLogin(authToken)) {
       String username = jwtService.getUsernameFromToken(authToken);
       com.gpch.login.model.User user = userService.loadUserByUsername(username);
@@ -38,12 +54,14 @@ public class JwtAuthenticationTokenFilter extends UsernamePasswordAuthentication
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
+        
         UserDetails userDetail = new User(username, user.getPassword(), enabled, accountNonExpired,
             credentialsNonExpired, accountNonLocked, user.getAuthorities());
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetail,
             null, userDetail.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        httpRequest.setAttribute("user", user);
       }
     }
     chain.doFilter(request, response);

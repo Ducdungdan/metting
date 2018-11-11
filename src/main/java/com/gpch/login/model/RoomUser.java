@@ -39,8 +39,8 @@ public class RoomUser implements Serializable{
     @JoinColumn(name = "user_id")
     private User user;
     
-    @OneToMany(cascade=CascadeType.ALL)
-    @JoinColumn(name="room_role_id")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "room_user_role", joinColumns = @JoinColumn(name = "room_user_id"), inverseJoinColumns = @JoinColumn(name = "room_role_id"))
     private Set<RoomRole> roles;
     
     @Column(name = "deleted")

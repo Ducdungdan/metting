@@ -35,16 +35,20 @@ public class Room implements Serializable{
     private String code;
     
     @Column(name = "name")
-    @Length(min = 10, message = "*Your name must have at least 10 characters")
+    @Length(min = 5, message = "*Your name must have at least 10 characters")
     @NotEmpty(message = "*Please provide room name")
     private String name;
     
+    @Column(name = "description")
+    @Length(min = 10, message = "*Your name must have at least 10 characters")
+    @NotEmpty(message = "*Please provide room description")
+    private String description;
+    
     @Column(name = "max_user")
-    @NotEmpty(message = "*Please provide max user of room")
-    private String maxUser;
+    private int maxUser;
     
     @Column(name = "number")
-    private String number;
+    private int number;
     
     @Column(name = "active")
     private int active;
@@ -90,11 +94,11 @@ public class Room implements Serializable{
 		this.name = name;
 	}
 
-	public String getMaxUser() {
+	public int getMaxUser() {
 		return maxUser;
 	}
 
-	public void setMaxUser(String maxUser) {
+	public void setMaxUser(int maxUser) {
 		this.maxUser = maxUser;
 	}
 
@@ -146,12 +150,21 @@ public class Room implements Serializable{
 		this.updatedDTG = updatedDTG;
 	}
 
-	public String getNumber() {
+	public int getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public void setNumber(int number) {
 		this.number = number;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
     
+	
 }
