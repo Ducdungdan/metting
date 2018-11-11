@@ -66,17 +66,6 @@ public class LoginController {
         modelAndView.setViewName("meetingdetail");
         return modelAndView;
     }
-//
-//userinformation
-//    @RequestMapping(value="/registration", method = RequestMethod.GET)
-//    public ModelAndView registration(){
-//        ModelAndView modelAndView = new ModelAndView();
-//        User user = new User();
-//        modelAndView.addObject("user", user);
-//        modelAndView.setViewName("registration");
-//        return modelAndView;
-//    }
-//
     
     @RequestMapping(value = "/api/registration", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
     public @ResponseBody Map<String, ? extends Object> createNewUser(@Valid User user, BindingResult bindingResult) {

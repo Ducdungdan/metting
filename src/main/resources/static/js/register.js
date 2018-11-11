@@ -1,7 +1,3 @@
-$(document).ready(function(){
-$("#submit_register").submit(function(){
-		return validate();
-	});
 
 // validate firstName
 $('#ip_firstname').blur(function(){
@@ -39,10 +35,6 @@ $('#ip_password').blur(function(){
 $('#ip_repassword').blur(function(){
 	$('#status_repassword').text("");
 	 validate_Repassword();
-});
-
-
-
 });
 
 // validate firstName
@@ -166,6 +158,7 @@ login = function(){
 			if(code == 0){
 				alert("Đăng nhập thành công");
 				window.location.replace("/default");
+				document.cookie = "authorization="+token;
 			}else {
 				$("#status_login").text("Tên đăng nhập hoặc mật khẩu không chính xác");
 			}
@@ -178,24 +171,26 @@ login = function(){
 
 
 registration = function(){
-	$.ajax({
-		url:'/api/registration',
-		type:'post',
-		data:{username:$('#ip_username').val(), password:$('#ip_password').val(), firstName:$('#ip_firstname').val(), lastName:$('#ip_lastname').val(), phone:$('#ip_phone').val()},
-		success: function(response){
-			var code = response.code;
-			if(code == 0){
-				$("#registration_message").text("[Đăng ký thành công ! Bạn vui lòng quay lại trang đăng nhập để sử dụng hệ thống]");
-				$("#registration_message").css("color","chartreuse");
-			}else {
-				$("#registration_message").text("[Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác]");
-				$("#registration_message").css("color","red");
-			}
-		},
-		 error: function () {
-			 console.log("Server error");
-		 }
-	});
+	if(validate()){
+		$.ajax({
+			url:'/api/registration',
+			type:'post',
+			data:{username:$('#ip_username').val(), password:$('#ip_password').val(), firstName:$('#ip_firstname').val(), lastName:$('#ip_lastname').val(), phone:$('#ip_phone').val()},
+			success: function(response){
+				var code = response.code;
+				if(code == 0){
+					$("#registration_message").text("[Đăng ký thành công ! Bạn vui lòng quay lại trang đăng nhập để sử dụng hệ thống]");
+					$("#registration_message").css("color","chartreuse");
+				}else {
+					$("#registration_message").text("[Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác]");
+					$("#registration_message").css("color","red");
+				}
+			},
+			 error: function () {
+				 console.log("Server error");
+			 }
+		});
+	}
 }
 
 

@@ -10,7 +10,7 @@ $(document).ready(function(){
 		type:'get',
 		success: function(response){
 			var code = response.code;
-			if(code == 1){
+			if(code == 0){
 				listUser = response.data;
 				console.log("Success");
 			}else {

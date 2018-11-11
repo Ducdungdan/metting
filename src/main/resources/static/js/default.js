@@ -1,5 +1,5 @@
 
-var listRoom;
+var listRoom= [];
 
 var colors = [
 '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -13,7 +13,7 @@ $(document).ready(function(){
 		type:'get',
 		success: function(response){
 			var code = response.code;
-			if(code == 1){
+			if(code == 0){
 				listRoom = response.data;
 				console.log("Success");
 			}else {
