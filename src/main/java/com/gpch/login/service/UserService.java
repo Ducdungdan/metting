@@ -82,6 +82,11 @@ public class UserService{
 		} else {
 			
 			Set<RoomUser> roomsUser = user.getMemberRooms();
+			
+			if(roomsUser==null) {
+				return rooms;
+			}
+			
 			for(RoomUser roomUser: roomsUser) {
 				if(roomUser.getDeleted() != 1) {
 					Map<String, Object> room = new HashMap<String, Object>();
@@ -90,6 +95,10 @@ public class UserService{
 					
 					Room r = roomUser.getRoom();
 					
+					if(r.getDeleted()==1) {
+						continue;
+					}
+					
 					room.put("id", r.getId());
 					room.put("code", r.getCode());
 					room.put("name", r.getName());
@@ -97,7 +106,12 @@ public class UserService{
 					room.put("description", r.getDescription());
 					room.put("number", r.getNumber());
 					room.put("active", r.getActive());
+					room.put("updatedBy", r.getUpdatedBy());
+					room.put("updatedDTG", r.getUpdatedDTG());
+					room.put("createdDTG", r.getCreatedDTG());
 					
+					
+					own.put("username", roomUser.getRoom().getUser().getId());
 					own.put("username", roomUser.getRoom().getUser().getUsername());
 					own.put("firstName", roomUser.getRoom().getUser().getFirstName());
 					own.put("lastName", roomUser.getRoom().getUser().getLastName());
