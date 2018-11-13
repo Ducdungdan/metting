@@ -347,6 +347,30 @@ public class RoomController {
         return result;
     	
     }
+    
+    @RequestMapping(value = "/get-reporters", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> getReporters(HttpServletRequest request) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	String roomId = request.getParameter("roomId");
+    	
+    	if(roomId==null) {
+    		result.put("code", 0);
+    		result.put("message", HttpStatus.OK.name());
+    		result.put("data", roomService.getReporters(user.getId()));
+            return result;
+    	} else {
+    		result.put("code", 0);
+    		result.put("message", HttpStatus.OK.name());
+    		result.put("data", roomService.getReporters(Integer.valueOf(roomId), user.getId()));
+            return result;
+    	}
+    	
+    }
+    
+    
 
 
 }

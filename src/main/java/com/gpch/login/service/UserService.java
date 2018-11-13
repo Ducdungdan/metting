@@ -111,7 +111,7 @@ public class UserService{
 					room.put("createdDTG", r.getCreatedDTG());
 					
 					
-					own.put("username", roomUser.getRoom().getUser().getId());
+					own.put("userId", roomUser.getRoom().getUser().getId());
 					own.put("username", roomUser.getRoom().getUser().getUsername());
 					own.put("firstName", roomUser.getRoom().getUser().getFirstName());
 					own.put("lastName", roomUser.getRoom().getUser().getLastName());

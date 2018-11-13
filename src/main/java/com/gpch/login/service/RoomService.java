@@ -355,6 +355,9 @@ public class RoomService{
 				room.put("description", r.getDescription());
 				room.put("number", r.getNumber());
 				room.put("active", r.getActive());
+				room.put("updatedBy", r.getUpdatedBy());
+				room.put("updatedDTG", r.getUpdatedDTG());
+				room.put("createdDTG", r.getCreatedDTG());
 				
 				own.put("userId", r.getUser().getId());
 				own.put("username", r.getUser().getUsername());
@@ -508,6 +511,71 @@ public class RoomService{
 		}
 		
 		return room;
+	}
+    
+    public List<Map<String, Object>> getReporters(int roomId, int userId) {
+    	
+    	
+		Room room = roomRepository.findById(roomId);
+		User user = userRepository.findById(userId);
+		List<Map<String, Object>> reporters = new ArrayList<Map<String,Object>>();
+		if(room==null||user==null) {
+			return null;
+		}
+		
+		List<User> allUser = userRepository.findAll();
+		Set<RoomUser> roomUsers = room.getMemberRooms();
+		if(roomUsers == null) {
+			return null;
+		}
+		
+		List<Integer> listUserInRoom = new ArrayList<Integer>();
+		for(RoomUser ru: roomUsers) {
+			listUserInRoom.add(ru.getUser().getId());
+		}
+		
+		for(User u: allUser) {
+			if(u.getActive()==1&&listUserInRoom.indexOf(u.getId()) != -1&&u.getId()!=userId) {
+				Map<String, Object> us = new HashMap<String, Object>();
+				
+				us.put("userId", u.getId());
+				us.put("firstName", u.getFirstName());
+				us.put("lastName", u.getLastName());
+				us.put("username", u.getUsername());
+				us.put("createdDTG", u.getCreatedDTG());
+				
+				reporters.add(us);
+			}
+		}
+		
+		return reporters;
+	}
+    
+public List<Map<String, Object>> getReporters(int userId) {
+    	
+		User user = userRepository.findById(userId);
+		List<Map<String, Object>> reporters = new ArrayList<Map<String,Object>>();
+		if(user==null) {
+			return null;
+		}
+		
+		List<User> allUser = userRepository.findAll();
+		
+		for(User u: allUser) {
+			if(u.getActive()==1&&u.getId()!=userId) {
+				Map<String, Object> us = new HashMap<String, Object>();
+				
+				us.put("userId", u.getId());
+				us.put("firstName", u.getFirstName());
+				us.put("lastName", u.getLastName());
+				us.put("username", u.getUsername());
+				us.put("createdDTG", u.getCreatedDTG());
+				
+				reporters.add(us);
+			}
+		}
+		
+		return reporters;
 	}
     
     private void updateNumberMemberRoom(int roomId) {
