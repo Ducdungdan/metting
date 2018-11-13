@@ -13,11 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class ChatController {
 
-    @RequestMapping(value = "/chat", method = RequestMethod.GET)
-    public String openChat(){
-        return "index";
-    }
-
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/hello")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {

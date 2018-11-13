@@ -37,14 +37,14 @@ public class JwtAuthenticationTokenFilter extends UsernamePasswordAuthentication
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String authToken = httpRequest.getHeader(TOKEN_HEADER);
     
-//    if(authToken==null) {
-//    	Cookie[] cookies = httpRequest.getCookies();
-//    	for (int i = 0; i < cookies.length; i++) {
-//    		if(cookies[i].getName().equals(TOKEN_HEADER)) {
-//    			authToken = cookies[i].getValue();
-//    		}
-//		}
-//    }
+    if(authToken==null) {
+    	Cookie[] cookies = httpRequest.getCookies();
+    	for (int i = 0; i < cookies.length; i++) {
+    		if(cookies[i].getName().equals(TOKEN_HEADER)) {
+    			authToken = cookies[i].getValue();
+    		}
+		}
+    }
     
     if (jwtService.validateTokenLogin(authToken)) {
       String username = jwtService.getUsernameFromToken(authToken);
