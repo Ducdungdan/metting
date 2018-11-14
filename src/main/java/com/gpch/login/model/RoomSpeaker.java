@@ -23,31 +23,29 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "room_code")
-public class RoomCode implements Serializable{
+@Table(name = "room_speaker")
+public class RoomSpeaker implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "room_code_id")
+    @Column(name = "room_speaker_id")
     private int id;
     
-    @Column(name = "code")
-    private String code;
+    @Column(name = "first_name")
+    @Length(min = 2, message = "*Your first name must have at least 10 characters")
+    @NotEmpty(message = "*Please provide first name speaker")
+    private String firstName;
     
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "room_code_role", joinColumns = @JoinColumn(name = "room_code_id"), inverseJoinColumns = @JoinColumn(name = "room_role_id"))
-    private Set<RoomRole> roles;
+    @Column(name = "last_name")
+    @Length(min = 2, message = "*Your last name must have at least 10 characters")
+    @NotEmpty(message = "*Please provide last name speaker")
+    private String lastName;
     
-    @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
+    @Column(name = "room_id")
+    private int roomId;
     
-    @Column(name = "thru_date")
-    private Timestamp thruDate;
-    
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName="user_id")
-    private User user;
+    @Column(name = "created_by")
+    private int createdBy;
     
     @Column(name = "created_dtg")
     private Timestamp createdDTG;
@@ -66,44 +64,36 @@ public class RoomCode implements Serializable{
 		this.id = id;
 	}
 
-	public String getCode() {
-		return code;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public Room getRoom() {
-		return room;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setRoom(Room room) {
-		this.room = room;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public Set<RoomRole> getRoles() {
-		return roles;
+	public int getRoomId() {
+		return roomId;
 	}
 
-	public void setRoles(Set<RoomRole> roles) {
-		this.roles = roles;
+	public void setRoomId(int roomId) {
+		this.roomId = roomId;
 	}
 
-	public Timestamp getThruDate() {
-		return thruDate;
+	public int getCreatedBy() {
+		return createdBy;
 	}
 
-	public void setThruDate(Timestamp thruDate) {
-		this.thruDate = thruDate;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
+	public void setCreatedBy(int createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public Timestamp getCreatedDTG() {
@@ -129,5 +119,7 @@ public class RoomCode implements Serializable{
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
+
+    
     
 }

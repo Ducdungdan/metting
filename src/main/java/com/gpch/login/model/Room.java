@@ -53,6 +53,9 @@ public class Room implements Serializable{
     @Column(name = "active")
     private int active;
     
+    @Column(name = "deleted")
+    private int deleted;
+    
     @ManyToOne
     @JoinColumn(name = "created_by", referencedColumnName="user_id")
     private User user;
@@ -60,6 +63,10 @@ public class Room implements Serializable{
     @OneToMany(cascade=CascadeType.ALL)
     @JoinColumn(name="room_id")
     private Set<RoomUser> memberRooms;
+    
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn(name="room_id")
+    private Set<RoomSpeaker> roomSpeakers;
     
     @Column(name = "created_dtg")
     private Timestamp createdDTG;
@@ -165,6 +172,21 @@ public class Room implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-    
+
+	public int getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(int deleted) {
+		this.deleted = deleted;
+	}
+
+	public Set<RoomSpeaker> getRoomSpeakers() {
+		return roomSpeakers;
+	}
+
+	public void setRoomSpeakers(Set<RoomSpeaker> roomSpeakers) {
+		this.roomSpeakers = roomSpeakers;
+	}
 	
 }

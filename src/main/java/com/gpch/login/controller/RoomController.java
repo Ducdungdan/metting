@@ -74,34 +74,83 @@ public class RoomController {
     }
     
     @RequestMapping(value = "/create", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public @ResponseBody Map<String, ? extends Object> createRoom(HttpServletRequest request) {
+    public @ResponseBody Map<String, ? extends Object> createRoom(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
         
     	Map<String, Object> result = new HashMap<String, Object>();
     	Map<String, Object> room = new HashMap<String, Object>();
     	User user = (User) request.getAttribute("user");
     	
-    	String name = request.getParameter("name");
-    	String description = request.getParameter("description");
-    	String sMaxUser = request.getParameter("maxUser");
-    	if(name.isEmpty()||description.isEmpty()||sMaxUser.isEmpty()) {
+    	if(!payload.containsKey("name")||!payload.containsKey("description")||!payload.containsKey("maxUser")||!payload.containsKey("speakers")) {
     		result.put("code", 1);
     		result.put("message", "Parameter not validate");
+            
             return result;
     	}
-    	int maxUser = 0;
-    	try {
-    		 maxUser = Integer.valueOf(sMaxUser);
-    	}catch (Exception e) {
-    		result.put("code", 1);
-    		result.put("message", "Parameter not validate");
-            return result;
-		}
-    	    	
-    	Room r = roomService.createRoom(name, description, maxUser, user);
+    	
+    	String name = (String) payload.get("name");
+    	String description = (String) payload.get("description");
+    	int maxUser = (int) payload.get("maxUser");
+    	List<Map<String, Object>> speakers = (List<Map<String, Object>>) payload.get("speakers");
+    	
+    	Room r = roomService.createRoom(name, description, maxUser, user, speakers);
     	
     	room = roomService.getRoom(r.getId());
     	
         result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", room);
+        
+        return result;
+    }
+    
+    @RequestMapping(value = "/createCode", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> createCode(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+    	Map<String, Object> code = new HashMap<String, Object>();
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	if(!payload.containsKey("roomId")||!payload.containsKey("roles")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	int roomId = (int) payload.get("roomId");
+    	List<String> roles = (List<String>) payload.get("roles");
+    	String codeS = roomService.createCodeRoom(user.getId(), roomId, roles);
+    	code.put("code", codeS);
+    	result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", code);
+        
+        return result;
+    }
+    
+    @RequestMapping(value = "/joinByCode", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> joinByCode(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+    	Map<String, Object> room = new HashMap<String, Object>();
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	if(!payload.containsKey("code")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	String code = (String) payload.get("code");
+    	RoomUser ru = roomService.joinRoomByCode(user.getId(), code);
+    	if(ru == null) {
+    		result.put("code", 1);
+    		result.put("message", "Code expired");
+            
+            return result;
+    	}
+    	
+    	room = roomService.getRoom(ru.getRoom().getId());
+    	result.put("code", 0);
 		result.put("message", HttpStatus.OK.name());
 		result.put("data", room);
         
@@ -227,17 +276,101 @@ public class RoomController {
     	}
     	Map<String, Object> r = new HashMap<String, Object>();
     	
-    	if(roomService.checkInRoom(roomId, user)) {
-    		r = roomService.getRoom(roomId);    		
-    	}
-    	
+    	r = roomService.getRoom(roomId);   
+		result.put("data", r);
+		
         result.put("code", 0);
 		result.put("message", HttpStatus.OK.name());
-		result.put("data", room);
         
         return result;
     	
     }
+    
+    @RequestMapping(value = "/finish-room", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> finishRoom(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	if(!payload.containsKey("roomId")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	int roomId = (int) payload.get("roomId");
+    	
+    	Room room = roomService.finishRoom(roomId, user.getId());
+    	
+    	if(room ==null) {
+    		if(!payload.containsKey("roomId")) {
+        		result.put("code", 1);
+        		result.put("message", "Not accesss room");
+                
+                return result;
+        	}
+    	}
+    	Map<String, Object> r = new HashMap<String, Object>();
+    	
+    	r = roomService.getRoom(roomId);
+        result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", r);
+        
+        return result;
+    	
+    }
+    
+    @RequestMapping(value = "/add-speakers", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> addSpeakers(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	if(!payload.containsKey("roomId")||!payload.containsKey("speakers")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	int roomId = (int) payload.get("roomId");
+    	List<Map<String, Object>> speakers = (List<Map<String, Object>>) payload.get("speakers");
+    	
+    	List<Map<String, Object>> roomSpeakers = roomService.addRoomSpeaker(roomId, user.getId(), speakers);
+    	
+        result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", roomSpeakers);
+        
+        return result;
+    	
+    }
+    
+    @RequestMapping(value = "/get-reporters", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> getReporters(HttpServletRequest request) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	String roomId = request.getParameter("roomId");
+    	
+    	if(roomId==null) {
+    		result.put("code", 0);
+    		result.put("message", HttpStatus.OK.name());
+    		result.put("data", roomService.getReporters(user.getId()));
+            return result;
+    	} else {
+    		result.put("code", 0);
+    		result.put("message", HttpStatus.OK.name());
+    		result.put("data", roomService.getReporters(Integer.valueOf(roomId), user.getId()));
+            return result;
+    	}
+    	
+    }
+    
+    
 
 
 }
