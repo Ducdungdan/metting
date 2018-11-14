@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -83,17 +85,17 @@ public class RoomService{
 					m.put("lastName", roomUser.getUser().getLastName());
 					
 					Set<RoomRole> rls = roomUser.getRoles();
-					
-					for(RoomRole rl: rls) {
-						Map<String, Object> rlm = new HashMap<String, Object>();
-						rlm.put("code", rl.getCode());
-						rlm.put("name", rl.getName());
-						roles.add(rlm);
-					}
-					
+				
+						for(RoomRole rl: rls) {
+							if(rl != null) {
+								Map<String, Object> rlm = new HashMap<String, Object>();
+								rlm.put("code", rl.getCode());
+								rlm.put("name", rl.getName());
+								roles.add(rlm);
+							}
+						}
 					
 					m.put("roles", roles);
-					
 					r.add(m);
 				}
 			}

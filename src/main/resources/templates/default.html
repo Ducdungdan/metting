@@ -21,30 +21,25 @@ xmlns:th="http://www.thymeleaf.org">
 </head>
 <body>
 	<div class="wraper">
-		<div class="header">
-			<h3
-			style="text-align: center; padding: 10px; font-weight: bold; color: blue;">
-		RECORDING MEETING SYSTEM</h3>
+		<div class="header" style="padding-top: 1px; height: 65px;">
+			<h4
+			style="text-align: center;font-weight: bold; color: blue;">RECORDING MEETING SYSTEM</h4>
+			<div class="divlogout" style="float: right; padding-right: 15px;">
+				Xin chào: <span id="spFullName"></span>
+				<a href="#">Đăng xuất</a>
+			</div>
+		
 	</div>
 	<div class="content">
 		<div class="content_left">
 
 			<div class="profile">
-				<div class="information">
-					<div class="image_profile">
-						<img th:src="@{/images/login.jpg}"
-						class="img-responsive center-block" alt="Logo" />
-						
-					</div>
-					<div class="nameuser">
-						<label>ND.Thắng</label>
-					</div>
-					
+				<div class="information">	
 					<div class="add_room">
 						<button type="button" style="margin-right: 10px;" class="btn btn-info" title="Join vào cuộc họp" data-toggle="modal" data-target="#popJoinMeeting">
 							<i class="fa fa-sign-in" aria-hidden="true"></i>
 						</button>
-						<button type="button" class="btn btn-success" title="Tạo cuộc họp mới"  data-toggle="modal" data-target="#popAddNewMeeting"> 
+						<button type="button" class="btn btn-success" title="Tạo cuộc họp mới"  data-toggle="modal" data-target="#popAddNewMeeting"  > 
 							<i class="fa fa-plus" aria-hidden="true" ></i>
 						</button>
 					</div>
@@ -90,7 +85,7 @@ xmlns:th="http://www.thymeleaf.org">
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary">OK</button>
+					<button type="button" class="btn btn-primary" onclick="joinMeeting()">OK</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -109,15 +104,15 @@ xmlns:th="http://www.thymeleaf.org">
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label>Tên cuộc họp:</label>
-						<input type="text" class="form-control" id="txtMeetingName">
+						<label>Tên cuộc họp: <span style="color: red;">*</span></label>
+						<input type="text" class="form-control" id="txtMeetingName" placeholder="Nhập vào tên cuộc họp ít nhất 10 kí tự">
 					</div>
 					<div class="form-group">
-						<label>Mô tả</label>
-						<textarea rows="3" class="form-control" id="txtMeetingDescription"></textarea>
+						<label>Mô tả: <span style="color: red;">*</span></label>
+						<textarea rows="3" class="form-control" id="txtMeetingDescription" placeholder="Nhập vào mô tả ít nhất 10 kí tự"></textarea>
 					</div>
 					<div class="form-group">
-						<label>Số người tối đa</label>
+						<label>Số người tối đa: <span style="color: red;">*</span></label>
 						<input type="number" min="1" id="txtMaxUser" class="form-control">
 					</div>
 					<div class="addSpeaker" style="border-top: 1px solid;">
@@ -184,7 +179,7 @@ xmlns:th="http://www.thymeleaf.org">
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" id="btnPopAddNew">Tạo mới</button>
+						<button type="button" class="btn btn-primary" id="btnPopAddNew" onclick="addRoom()">Tạo mới</button>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
 				</div>

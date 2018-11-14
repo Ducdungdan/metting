@@ -53,10 +53,16 @@ xmlns:th="http://www.thymeleaf.org">
 					<label>Xin chào: Nguyễn Đình Thắng</label>
 				</div>
 				<div class="function" style="text-align: center; ">
-					<button type="button" class="btn btn-primary" style="width: 48%" data-toggle="modal" data-target="#popAddNewMeeting">
-						<i class="fa fa-user-plus" aria-hidden="true"></i> Thêm người
+					<button type="button" class="btn btn-primary" style="width: 23%" data-toggle="modal" data-target="#popAddNewMeeting" onclick="loadData2Popup()" title="Thêm người dùng">
+						<i class="fa fa-user-plus" aria-hidden="true"></i>
 					</button>
-					<button type="button" class="btn btn-primary" style="width: 48%"><i class="fa fa-times-circle" aria-hidden="true"></i> Kết thúc</button>
+					<button type="button" class="btn btn-danger" style="width: 23%" data-toggle="modal" data-target="#popRemoveMember" onclick="loadData2PopupRemove()" title="Xóa ngươi dùng">
+						<i class="fa fa-ban" aria-hidden="true"></i>
+					</button>
+					<button type="button" class="btn btn-infor" style="width: 23%" data-toggle="modal" data-target="#popShareCode" title="Share mã code" onclick="loadPermission2PopupShareCode()">
+						<i class="fa fa-share" aria-hidden="true"></i>
+					</button>
+					<button type="button" class="btn btn-success" style="width: 23%" title="Kết thúc cuộc họp"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 				</div>
 			</div>
 			<div class="lst_user">
@@ -127,27 +133,23 @@ xmlns:th="http://www.thymeleaf.org">
 							<div class="col-md-5">
 								<i class="fa fa-angle-double-right" aria-hidden="true" style="font-weight: bold;">Chọn người dùng</i>
 								<select class="chosen" id="selectreporter">
-									<option value="1">Nguyễn Đình Thắng - thangnd</option>
-									<option value="2">Nguyễn Khắc Tư - tunk</option>
-									<option value="3">Lê Bảo Chi - chilb</option>
-									<option value="4">Nguyễn Văn Tuyển - tuyennv</option>
-									<option value="5">Lê Văn Đức - duclv</option>
+									<option value="15">Nguyễn Đình Thắng - thangnd</option>
+									<option value="16">Nguyễn Khắc Tư - tunk</option>
+									<option value="17">Lê Bảo Chi - chilb</option>
+									<option value="18">Nguyễn Văn Tuyển - tuyennv</option>
+									<option value="19">Lê Văn Đức - duclv</option>
 								</select>
 							</div>
 
 							<div class="col-md-5">
 								<i class="fa fa-angle-double-right" aria-hidden="true" style="font-weight: bold;">Chọn quyền</i>
 								<select class="chosen"  multiple="true" id="selectreporterpermission">
-									<option value="1">Thêm báo cáo</option>
-									<option value="2">Chỉnh sửa báo cáo</option>
-									<option value="3">Mời reporter</option>
-									<option value="4">Thêm speaker</option>
-									<option value="5">Chia sẻ báo cáo</option>
+									
 								</select>
 							</div>
 							<div class="col-md-2">
 								<br>
-								<button type="button" class="btn btn-success" style="padding: 4px 6px;">
+								<button type="button" class="btn btn-success" style="padding: 4px 6px;" onclick="addReporter()">
 									<i class="fa fa-user-plus" aria-hidden="true"></i>
 								</button>					
 							</div>
@@ -155,28 +157,92 @@ xmlns:th="http://www.thymeleaf.org">
 						</div>
 						<div class="row" style="padding: 10px;">
 							<div class="lst_reporter">
-								<span class="user_span" id="reporter_01">Nguyễn Đình Thắng - thangnd 
-									<a onclick="closeReporter('01')"><i class="fa fa-times" aria-hidden="true" ></i></a>
-								</span> 
+								
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" id="btnPopAddNew"> OK</button>
+						<button type="button" class="btn btn-primary" id="btnPopAddNew" onclick="addListUser()"> OK</button>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript" th:src="@{/js/bootstrap-multiselect.js}"></script>
-		<script type="text/javascript" th:src="@{/js/bootstrap-dropselect.js}"></script>
-		<script type="text/javascript">
-			$(".chosen").chosen();
-			$(".chosen-container-single").css("width","-webkit-fill-available");
-			$("#selectreporter").val("6").trigger("chosen:updated");
-			$(".chosen-container").css("width","-webkit-fill-available");
-			</script>
+		
+	</div>
+	
+	<div class="modal fade" id="popRemoveMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog"  role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="background: aliceblue;">
+					<h3 class="modal-title" id="exampleModalLabel" style="display: inline; font-weight: bold;">Xóa người khỏi cuộc họp</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="lstUserExist">
+						
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="btnPopAddNew" onclick="RemoveUsers()"> OK</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
+	
+	<!-- popup share code -->
+	
+	<div class="modal fade" id="popShareCode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog"  role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="background: aliceblue;">
+					<h3 class="modal-title" id="exampleModalLabel" style="display: inline; font-weight: bold;">Chia sẻ mã code tham gia cuộc họp</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<h4>-->Lựa chọn danh sách các quyền chia sẻ:</h4>
+					<div class="row">
+						<div class="col-md-10">
+							<select class="chosen"  multiple="true" id="permissionShare">
+
+							</select>
+						</div>
+						<div class="col-md-2">
+							<button type="button" class="btn btn-success" title="Tạo code" onclick="createCode()">
+								<i class="fa fa-plus" aria-hidden="true"></i>
+							</button>
+						</div>
+
+						
+					</div>
+					<div class="lstCodes">
+							<table id="tblstCodes" class="table" style="margin-top: 10px;">
+								<tr>
+									<th>Danh sách các quyền</th>
+									<th>Code share</th>
+								</tr>
+							</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript" th:src="@{/js/bootstrap-multiselect.js}"></script>
+	<script type="text/javascript" th:src="@{/js/bootstrap-dropselect.js}"></script>
+	<script type="text/javascript">
+		$(".chosen").chosen();
+		$(".chosen-container-single").css("width","-webkit-fill-available");
+		$("#selectreporter").val("6").trigger("chosen:updated");
+		$(".chosen-container").css("width","-webkit-fill-available");
+	</script>
 </body>
 </html>

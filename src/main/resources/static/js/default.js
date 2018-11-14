@@ -8,6 +8,8 @@ var colors = [
 
 $(document).ready(function(){
 
+	showUserFullName();
+
 	$.ajax({
 		url:'/api/room/joined',
 		type:'get',
@@ -16,6 +18,7 @@ $(document).ready(function(){
 			if(code == 0){
 				listRoom = response.data;
 				console.log("Success");
+				loadData();
 			}else {
 				console.log("Faild");
 			}
@@ -27,6 +30,17 @@ $(document).ready(function(){
 	
 	loadData();
 });
+
+showUserFullName = function(){
+	var fullName = getCookiebyName("fullname");
+	$("#spFullName").text(fullName);
+}
+
+getCookiebyName = function(name){
+	var pair = document.cookie.match(new RegExp(name + '=([^;]+)'));
+	return !!pair ? pair[1] : null;
+};
+
 
 loadData = function(){
 	// bind data to listmeetingroom
@@ -89,10 +103,6 @@ closeReporter = function(id){
 	
 }
 
-addRoomJoin = function(){
-	addMettingRoom(1,10,"10:12:20","Cuộc họp thành viên hội đồng quản trị");
-	addMettingRoom(2,12,"10:12:20","Cuộc họp thành viên hội đồng quản trị");
-}
 
 navigateToDetail = function(idroom){
 	
@@ -101,18 +111,56 @@ navigateToDetail = function(idroom){
 }
 
 // tao mot cuoc hop moi
-addRoom = function(name,description, maxuser){
+addRoom = function(){
 	$.ajax({
 		url:'/api/room/create',
 		type:'post',
 		data:{name:$('#txtMeetingName').val(), description:$('#txtMeetingDescription').val(), maxUser:$('#txtMaxUser').val()},
 		success: function(response){
 			var code = response.code;
-			var token = response.token;
-			return code;
+			if(code == 1){
+				alert("Không được để trống tên, mô tả và số người sử dụng tối đa");
+			}else{
+				alert("Tạo mới cuộc họp thành công");
+			}
+			
 		},
 		error: function () {
 			console.log("Server error");
 		}
 	});
+}
+
+joinMeeting = function(){
+	var code = $("#txtCode").val();
+	var objectReq = {code: code};
+	var status = true;
+	if(code.trim().length == 0) {
+		status = false;
+		alert("Bạn chưa nhập mã code");
+	}
+
+	if(status){
+		$.ajax({
+			url:'/api/room/joinByCode',
+			type:'post',
+			contentType:'application/json',
+			dataType: 'json',
+			data: JSON.stringify(objectReq),
+			success: function(response){
+
+				if(code == 0){
+					console.log("Success");
+					var roomid = response.data.id;
+					var url = "meeting?roomID="+ roomid;
+					window.location.replace(url);
+				}else {
+					console.log("Faild");
+				}
+			},
+			error: function () {
+				console.log("Server error");
+			}
+		});
+	}
 }

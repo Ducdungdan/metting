@@ -83,15 +83,20 @@ public class RoomController {
     	String name = request.getParameter("name");
     	String description = request.getParameter("description");
     	String sMaxUser = request.getParameter("maxUser");
-    	if(name==null||description==null||sMaxUser==null) {
+    	if(name.isEmpty()||description.isEmpty()||sMaxUser.isEmpty()) {
     		result.put("code", 1);
     		result.put("message", "Parameter not validate");
-            
             return result;
     	}
-    	
-    	int maxUser = Integer.valueOf(sMaxUser);
-    	
+    	int maxUser = 0;
+    	try {
+    		 maxUser = Integer.valueOf(sMaxUser);
+    	}catch (Exception e) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            return result;
+		}
+    	    	
     	Room r = roomService.createRoom(name, description, maxUser, user);
     	
     	room = roomService.getRoom(r.getId());
@@ -134,15 +139,15 @@ public class RoomController {
             
             return result;
     	}
-    	int roomId = (int) payload.get("roomId");
+    	int roomId = Integer.valueOf((String) payload.get("roomId"));
     	List<Object> members = (List<Object>) payload.get("members");
     	
     	for(int i = 0; i < members.size(); ++i) {
     		Map<String, Object> member = (Map<String, Object>) members.get(i);
     		
     		List<String> roles = (List<String>) member.get("roles");
-    		
-    		roomService.addMemberRoom(roomId, (int)member.get("userId"), roles, user.getId());
+    		int usrId = Integer.valueOf((String) member.get("userId"));
+    		roomService.addMemberRoom(roomId, usrId, roles, user.getId());
     	}
     	
     	
