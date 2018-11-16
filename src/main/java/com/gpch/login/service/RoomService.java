@@ -583,7 +583,7 @@ public List<Map<String, Object>> getReporters(int userId) {
     	room.setNumber(room.getMemberRooms().size()); 
     }
     
-    private Set<RoomRole> getRoleRoomByUser(int roomId, int userId) {
+    public Set<RoomRole> getRoleRoomByUser(int roomId, int userId) {
 		Room room = roomRepository.findById(roomId);
 		
 		Set<RoomUser> members = room.getMemberRooms();

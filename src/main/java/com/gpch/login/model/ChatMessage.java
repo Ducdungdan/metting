@@ -1,16 +1,15 @@
 package com.gpch.login.model;
 
-/**
- * Created by rajeevkumarsingh on 24/07/17.
- */
+import java.util.Map;
+
 public class ChatMessage {
     private MessageType type;
-    private String content;
-    private String sender;
+    private Map<String, Object> data;
 
     public enum MessageType {
         CHAT,
         JOIN,
+        NOTIFY,
         LEAVE
     }
 
@@ -22,19 +21,12 @@ public class ChatMessage {
         this.type = type;
     }
 
-    public String getContent() {
-        return content;
-    }
+	public Map<String, Object> getData() {
+		return data;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
+	public void setData(Map<String, Object> data) {
+		this.data = data;
+	}
+	
 }

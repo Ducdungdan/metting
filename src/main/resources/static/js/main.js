@@ -34,12 +34,12 @@ function connect(event) {
 
 function onConnected() {
     // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/hello', onMessageReceived);
+    stompClient.subscribe('/topic/51', onMessageReceived);
 
     // Tell your username to the server
     stompClient.send("/app/chat.addUser",
         {},
-        JSON.stringify({sender: username, type: 'JOIN'})
+        JSON.stringify({data: {"authorization": username}, type: 'JOIN'})
     )
 
     connectingElement.classList.add('hidden');
@@ -57,8 +57,13 @@ function sendMessage(event) {
 
     if(messageContent && stompClient) {
         var chatMessage = {
-            sender: username,
-            content: messageInput.value,
+        		data: {
+        			roomId: 51,
+        			speakerId: 54,
+        			content: messageInput.value,
+        			startTime: new Date().getTime(),
+        			endTime: new Date().getTime() + 3600
+        		},
             type: 'CHAT'
         };
 
@@ -70,6 +75,7 @@ function sendMessage(event) {
 
 
 function onMessageReceived(payload) {
+	console.log(payload);
     var message = JSON.parse(payload.body);
 
     var messageElement = document.createElement('li');
@@ -80,24 +86,42 @@ function onMessageReceived(payload) {
     } else if (message.type === 'LEAVE') {
         messageElement.classList.add('event-message');
         message.content = message.sender + ' left!';
-    } else {
-        messageElement.classList.add('chat-message');
+    } else if (message.type === 'CHAT') {
+    	messageElement.classList.add('chat-message');
 
+    	var reporter = message.data.reporter;
+    	var speaker = message.data.speaker
+    	
         var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
+        var avatarText = document.createTextNode(reporter.lastName[0]);
         avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+        avatarElement.style['background-color'] = getAvatarColor(reporter.firstName + " " + reporter.lastName);
 
         messageElement.appendChild(avatarElement);
 
         var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender);
+        var usernameText = document.createTextNode(reporter.firstName + " " + reporter.lastName);
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
-    }
+    } 
+//    else {
+//        messageElement.classList.add('chat-message');
+//
+//        var avatarElement = document.createElement('i');
+//        var avatarText = document.createTextNode(message.sender[0]);
+//        avatarElement.appendChild(avatarText);
+//        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+//
+//        messageElement.appendChild(avatarElement);
+//
+//        var usernameElement = document.createElement('span');
+//        var usernameText = document.createTextNode(message.sender);
+//        usernameElement.appendChild(usernameText);
+//        messageElement.appendChild(usernameElement);
+//    }
 
     var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.content);
+    var messageText = document.createTextNode(message.data.startTime + " " + message.data.endTime + " " + message.data.speaker.firstName + message.data.speaker.lastName + ": " + message.data.content);
     textElement.appendChild(messageText);
 
     messageElement.appendChild(textElement);

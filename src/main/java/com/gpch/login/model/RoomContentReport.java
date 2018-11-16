@@ -31,13 +31,10 @@ public class RoomContentReport implements Serializable{
     @Column(name = "room_content_report_id")
     private int id;
     
-    @Column(name = "name")
-    @Length(min = 10, message = "*Your name must have at least 10 characters")
-    @NotEmpty(message = "*Please provide name room role")
-    private String name;
+    @Column(name = "speaker_id")
+    private int speakerId;
     
     @Column(name = "content")
-    @Length(min = 20, message = "*Your name must have at least 20 characters")
     @NotEmpty(message = "*Please provide content message")
     private String content;
     
@@ -46,6 +43,9 @@ public class RoomContentReport implements Serializable{
     
     @Column(name = "end")
     private Timestamp end;
+    
+    @Column(name = "room_id")
+    private int roomId;
     
     @ManyToOne
     @JoinColumn(name = "created_by", referencedColumnName="user_id")
@@ -68,12 +68,22 @@ public class RoomContentReport implements Serializable{
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	
+
+	public int getSpeakerId() {
+		return speakerId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSpeakerId(int speakerId) {
+		this.speakerId = speakerId;
+	}
+
+	public int getRoomId() {
+		return roomId;
+	}
+
+	public void setRoomId(int roomId) {
+		this.roomId = roomId;
 	}
 
 	public String getContent() {
@@ -131,5 +141,5 @@ public class RoomContentReport implements Serializable{
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
-    
+   
 }

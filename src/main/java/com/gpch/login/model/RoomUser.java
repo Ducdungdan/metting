@@ -39,7 +39,7 @@ public class RoomUser implements Serializable{
     @JoinColumn(name = "user_id")
     private User user;
     
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(name = "room_user_role", joinColumns = @JoinColumn(name = "room_user_id"), inverseJoinColumns = @JoinColumn(name = "room_role_id"))
     private Set<RoomRole> roles;
     

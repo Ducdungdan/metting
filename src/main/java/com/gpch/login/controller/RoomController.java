@@ -11,6 +11,7 @@ import com.gpch.login.model.Room;
 import com.gpch.login.model.RoomUser;
 import com.gpch.login.model.User;
 import com.gpch.login.service.JwtService;
+import com.gpch.login.service.RoomContentService;
 import com.gpch.login.service.RoomService;
 import com.gpch.login.service.UserService;
 
@@ -41,6 +42,9 @@ public class RoomController {
     
     @Autowired
     private RoomService roomService;
+    
+    @Autowired
+    private RoomContentService roomContentService;
     
     @RequestMapping(value = "/joined", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     public @ResponseBody Map<String, ? extends Object> getRoomJoined(HttpServletRequest request) {
@@ -367,6 +371,32 @@ public class RoomController {
     		result.put("data", roomService.getReporters(Integer.valueOf(roomId), user.getId()));
             return result;
     	}
+    	
+    }
+    
+    @RequestMapping(value = "/get-room-content", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> getRoomContent(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	
+    	
+    	if(!payload.containsKey("roomId")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	int roomId = (int) payload.get("roomId");
+    	
+    	List<Map<String, Object>> contents = roomContentService.getListRoomContent(roomId, user);
+    	
+    	result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", contents);
+        return result;
     	
     }
     

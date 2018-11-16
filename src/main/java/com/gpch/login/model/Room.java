@@ -60,7 +60,7 @@ public class Room implements Serializable{
     @JoinColumn(name = "created_by", referencedColumnName="user_id")
     private User user;
     
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name="room_id")
     private Set<RoomUser> memberRooms;
     
