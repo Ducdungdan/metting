@@ -21,12 +21,14 @@ xmlns:th="http://www.thymeleaf.org">
 </head>
 <body>
 	<div class="wraper">
-		<div class="header" style="padding-top: 1px; height: 65px;">
+		<div class="header" style="padding-top: 1px; height: 78px;">
 			<h4
 			style="text-align: center;font-weight: bold; color: blue;">RECORDING MEETING SYSTEM</h4>
 			<div class="divlogout" style="float: right; padding-right: 15px;">
 				Xin chào: <span id="spFullName"></span>
-				<a href="#">Đăng xuất</a>
+				<button type="button" class="btn btn-primary" onclick="logout()" style="display: inline;" title="Đăng xuất">
+					<i class="fa fa-sign-out" aria-hidden="true"></i>
+				</button>
 			</div>
 		
 	</div>
@@ -115,69 +117,7 @@ xmlns:th="http://www.thymeleaf.org">
 						<label>Số người tối đa: <span style="color: red;">*</span></label>
 						<input type="number" min="1" id="txtMaxUser" class="form-control">
 					</div>
-					<div class="addSpeaker" style="border-top: 1px solid;">
-						
-						<div style="background: aliceblue; padding: 10px 9px;"> <h3><i class="fa fa-plus-square" aria-hidden="true"> Thêm Speaker </i></h3></div>
-						<div class="row" style="margin-top: 15px;">
-							<div class="col-md-6">
-								<label>FirstName</label>
-								<input type="text" class="form-control" id="firstName_Speaker">
-								<label>LastName</label>
-								<input type="text" class="form-control" id="lastName_Speaker">
-								<button type="button" class="btn btn-success" style="width: -webkit-fill-available; margin-top: 10px;">Add</button>
-							</div>
-							
-							<div class="col-md-6" style="padding: 20px;">
-								<div class="lstSpeaker">
-									<span class="user_span">Nguyễn Đình Thắng - thangnd</span> <span class="user_span">Nguyễn Văn Tuyển - tuyenvv</span> 
-									<span class="user_span">Nguyễn Đình Thắng - thangnd</span> <span class="user_span">Nguyễn Văn Tuyển - tuyenvv</span> 
-								</div>
-							</div>
-						</div>
-						
-					</div>
 					
-					<div class="addReporter" style="border-top: 1px solid;">
-						
-						<div style="background: aliceblue; padding: 10px 9px;"> <h3><i class="fa fa-plus-circle" aria-hidden="true"> Thêm Reporter </i></h3></div>
-						<div class="row" style="margin-top: 15px;">
-							<div class="col-md-5">
-								<i class="fa fa-angle-double-right" aria-hidden="true" style="font-weight: bold;">Chọn người dùng</i>
-								<select class="chosen" id="selectreporter">
-									<option value="1">Nguyễn Đình Thắng - thangnd</option>
-									<option value="2">Nguyễn Khắc Tư - tunk</option>
-									<option value="3">Lê Bảo Chi - chilb</option>
-									<option value="4">Nguyễn Văn Tuyển - tuyennv</option>
-									<option value="5">Lê Văn Đức - duclv</option>
-								</select>
-							</div>
-							
-							<div class="col-md-5">
-								<i class="fa fa-angle-double-right" aria-hidden="true" style="font-weight: bold;">Chọn quyền</i>
-								<select class="chosen"  multiple="true" id="selectreporterpermission">
-									<option value="1">Thêm báo cáo</option>
-									<option value="2">Chỉnh sửa báo cáo</option>
-									<option value="3">Mời reporter</option>
-									<option value="4">Thêm speaker</option>
-									<option value="5">Chia sẻ báo cáo</option>
-								</select>
-							</div>
-							<div class="col-md-2">
-								<br>
-								<button type="button" class="btn btn-success" style="padding: 4px 6px;">
-									<i class="fa fa-user-plus" aria-hidden="true"></i>
-								</button>					
-							</div>
-							
-						</div>
-						<div class="row" style="padding: 10px;">
-							<div class="lst_reporter">
-								<span class="user_span" id="reporter_01">Nguyễn Đình Thắng - thangnd 
-									<a onclick="closeReporter('01')"><i class="fa fa-times" aria-hidden="true" ></i></a>
-								</span> 
-							</div>
-						</div>
-					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" id="btnPopAddNew" onclick="addRoom()">Tạo mới</button>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -188,6 +128,7 @@ xmlns:th="http://www.thymeleaf.org">
 		<script type="text/javascript" th:src="@{/js/bootstrap-multiselect.js}"></script>
 		<script type="text/javascript" th:src="@{/js/bootstrap-dropselect.js}"></script>
 		<script type="text/javascript" th:src="@{/js/default.js}"></script>
+		<script type="text/javascript" th:src="@{/js/logout.js}"></script>
 		<script type="text/javascript">
 			$(".chosen").chosen();
 			$(".chosen-container-single").css("width","-webkit-fill-available");

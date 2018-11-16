@@ -29,7 +29,7 @@ body {
 }
 
 .content_right {
-	height: -webkit-fill-available;
+	
 	width: 29%;
 	/* background: bisque; */
 	float: right;
@@ -37,7 +37,7 @@ body {
 }
 
 .btn_function_area {
-	height: 102px;
+	
 	/* background: azure; */
 }
 
@@ -209,7 +209,7 @@ body {
 }
 
 .function{
-	height: 40px;
+	
     background: aliceblue;
 }
 /* width */

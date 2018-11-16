@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	showUserFullName();
 	$("#users li").click(function(){
 		removeActive();
 		$(this).addClass("active");
@@ -12,8 +13,16 @@ $(document).ready(function(){
 		sendMessage();
 		
 	});
+	var roomID = GetURLParameter("roomID");
+	getRoomInfor(roomID);
+	$("#meeting_name").text(roomInfor.name);
+	var meetingStartTime = roomInfor.createdDTG;
+	$("#meeting_time").text(meetingStartTime);
 	
 });
+
+// trang thai cuoc hop dang dien ra hay da ket thuc
+var active = 0;
 
 loadData = function (){
 	loadData2Popup();
@@ -24,6 +33,16 @@ removeActive = function(){
 		lstLi[i].classList.remove("active");
 	}
 }
+
+showUserFullName = function(){
+	var fullName = getCookiebyName("fullname");
+	$("#spFullName").text(fullName);
+}
+
+getCookiebyName = function(name){
+	var pair = document.cookie.match(new RegExp(name + '=([^;]+)'));
+	return !!pair ? pair[1] : null;
+};
 
 var colors = [
 '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -199,12 +218,51 @@ addPermissionSelectBox = function(value, name){
 	lstPer.appendChild(perOptionElement);
 }
 
+addReporterSelectBox = function(userid, firstname, lastname, username){
+	var fullname = firstname+" "+lastname +" - " + username;
+	var optionElement = document.createElement('option');
+	optionElement.setAttribute("value",userid);
+	var textNode = document.createTextNode(fullname);
+	optionElement.appendChild(textNode);
+	var lstReporter = document.querySelector('#selectreporter');
+	lstReporter.appendChild(optionElement);
+}
+
+
 // load du lieu len popup them nguoi
 loadData2Popup = function(){
 	for (var i = 0; i < roleRooms.length; i++) {
 		addPermissionSelectBox(roleRooms[i].value, roleRooms[i].name);
 	}
 	$('#selectreporterpermission').trigger("chosen:updated");
+	loadData2SelectReporter();
+}
+
+// loaddata vao selectbox danh sach reporter
+loadData2SelectReporter = function(){
+	var roomID = GetURLParameter("roomID");
+	$.ajax({
+		url:'/api/room/get-reporters',
+		type:'get',
+		data:{roomId:roomID},
+		success: function(response){
+			var code = response.code;
+			var token = response.token;
+			if(code == 0){
+				var lstReporters = response.data;
+				for (var i = 0; i < lstReporters.length; i++) {
+					var rpt = lstReporters[i];
+					addReporterSelectBox(rpt.userId,rpt.firstName, rpt.lastName,rpt.username);
+					$('#selectreporter').trigger("chosen:updated");
+				}
+			}else {
+				$("#status_login").text("Tên đăng nhập hoặc mật khẩu không chính xác");
+			}
+		},
+		error: function () {
+			console.log("Server error");
+		}
+	});
 }
 
 CLick = function(){
@@ -230,6 +288,23 @@ addReporter = function(){
 	indexOfReporter++;
 
 }
+lstSpeaker = [];
+var indexOfSpeaker = 0;
+addSpeaker = function(){
+	var firstName = $("#firstName_Speaker").val();
+	var lastName = $("#lastName_Speaker").val();
+
+	lstSpeaker.push({index: indexOfSpeaker, firstName: firstName, lastName: lastName});
+
+	var idSp = "speaker_" + indexOfSpeaker;
+	var name = firstName +" " + lastName;
+	$(".lstSpeaker").append(
+		"<span class='user_span' id='"+idSp +"'>"+name+
+		"<a onclick='closeSpeaker("+indexOfSpeaker+")'><i class='fa fa-times' aria-hidden='true' ></i></a>"+
+		"</span>");
+	indexOfSpeaker++;
+	console.log(lstSpeaker);
+}
 
 removeReporter = function(userID){
 	for(var i=0; i<lstReporters.length; i++){
@@ -247,7 +322,40 @@ closeReporter = function(id){
 	removeReporter(id);
 }
 
+closeSpeaker = function(id){
+	var spID = "#speaker_"+id;
+	$(spID).css("display","none");
+	console.log(spID);
+	removeSpeaker(id);
+}
+
+removeSpeaker = function(id){
+	for(var i=0; i<lstSpeaker.length; i++){
+		if(id == lstSpeaker[i].index){
+			lstSpeaker.splice(i,1);
+		}
+	}
+}
+
 addListUser = function(){
+	var spk=  addListSpeaker();
+	if (spk) {
+		var rpk= addListReporter();
+		if(!rpk){
+			alert("Đã xảy ra lỗi trong quá trình thêm reporter");
+		}else{
+			alert("Đã thêm người thành công");
+			var url = "/meeting?roomID="+  GetURLParameter("roomID");
+			window.location.replace(url);
+		}
+	}else{
+		alert("Đã xảy ra lỗi trong quá trình thêm speaker");
+	}
+	
+
+}
+
+addListReporter = function(){
 	var roomID = GetURLParameter("roomID");
 	var objRoomReq = {roomID: roomID, members:lstReporters};
 	console.log(objRoomReq);
@@ -262,17 +370,46 @@ addListUser = function(){
 			var code = response.code;
 			if(code == 0){
 				console.log("Success");
-				loadData();
+				return true;
 			}else {
 				console.log("Faild");
+				return false;
 			}
 		},
 		error: function () {
 			console.log("Server error");
 		}
 	});
+}
 
-
+addListSpeaker = function(){
+	var roomId = GetURLParameter("roomID");
+	var listSpeakerAdd =[];
+	for (var i = 0; i < lstSpeaker.length; i++) {
+		var spk = lstSpeaker[i];
+		listSpeakerAdd.push({firstName:spk.firstName, lastName: spk.lastName});
+	}
+	var objectReq = {roomId: roomId, speakers:listSpeakerAdd};
+	$.ajax({
+		url:'/api/room/add-speakers',
+		type:'post',
+		contentType:'application/json',
+		dataType: 'json',
+		data: JSON.stringify(objectReq),
+		success: function(response){
+			var code = response.code;
+			if(code == 0){
+				console.log("Success");
+				return true;
+			}else {
+				console.log("Faild");
+				return false;
+			}
+		},
+		error: function () {
+			console.log("Server error");
+		}
+	});
 }
 /**
  * Lay tham so truyen tren duong dan
@@ -346,25 +483,30 @@ lstUserIDRemoved= [];
 
  RemoveUsers = function(){
  	var roomID = GetURLParameter("roomID");
- 	var dataRq = {roomId:roomID,members:lstUserIDRemoved};
- 	$.ajax({
- 		url:'/api/room/remove-members',
- 		type:'post',
- 		contentType:'application/json',
- 		dataType: 'json',
- 		data: JSON.stringify(dataRq),
- 		success: function(response){
- 			var code = response.code;
- 			if(code == 0){
- 				console.log("Success");
- 			}else {
- 				console.log("Faild");
+ 	if(lstUserIDRemoved.length > 0){
+ 		var dataRq = {roomId:roomID,members:lstUserIDRemoved};
+ 		$.ajax({
+ 			url:'/api/room/remove-members',
+ 			type:'post',
+ 			contentType:'application/json',
+ 			dataType: 'json',
+ 			data: JSON.stringify(dataRq),
+ 			success: function(response){
+ 				var code = response.code;
+ 				if(code == 0){
+ 					console.log("Success");
+ 				}else {
+ 					console.log("Faild");
+ 				}
+ 			},
+ 			error: function () {
+ 				console.log("Server error");
  			}
- 		},
- 		error: function () {
- 			console.log("Server error");
- 		}
- 	});
+ 		});
+ 	}else{
+ 		alert("Chưa chọn người dùng để xóa");
+ 	}
+ 	
  }
 
  // Share ma code
@@ -425,4 +567,54 @@ lstUserIDRemoved= [];
  		"<td>" + lstRoles +"</td> <td>"+code+"</td>"+
  		"</tr>"
  		);
+ }
+
+ // lay thong tin cua phong vua tao
+
+ var roomInfor ={};
+ getRoomInfor = function(roomID){
+ var url = "/api/room/"+roomID;
+ 	$.ajax({
+		url:url,
+		type:'get',
+		success: function(response){
+			var code = response.code;
+			var token = response.token;
+			if(code == 0){
+				roomInfor = response.data;
+			}else {
+				console.log("Error trong get thong tin room theo roomid");
+			}
+		},
+		error: function () {
+			console.log("Server error");
+		}
+	});
+ }
+
+ // kết thúc cuộc họp
+ finishMeeting = function(){
+ 	var roomID = GetURLParameter("roomID");
+ 	var objectReq = {roomId: roomID};
+ 	$.ajax({
+		url:'/api/room/finish-room',
+		type:'post',
+		contentType:'application/json',
+		dataType: 'json',
+		data: JSON.stringify(objectReq),
+		success: function(response){
+			var code = response.code;
+			if(code == 0){
+				console.log("Success");
+				var url = "/meetingdetail?roomid="+roomID;
+				window.location.replace(url);
+			}else {
+				console.log("Faild");
+				
+			}
+		},
+		error: function () {
+			console.log("Server error");
+		}
+	});
  }

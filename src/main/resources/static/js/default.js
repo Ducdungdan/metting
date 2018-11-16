@@ -112,16 +112,22 @@ navigateToDetail = function(idroom){
 
 // tao mot cuoc hop moi
 addRoom = function(){
+	var speakers = [];
+	var objectReq = {name: $('#txtMeetingName').val(), description: $('#txtMeetingDescription').val(), maxUser: $('#txtMaxUser').val(), speakers: speakers }
 	$.ajax({
 		url:'/api/room/create',
 		type:'post',
-		data:{name:$('#txtMeetingName').val(), description:$('#txtMeetingDescription').val(), maxUser:$('#txtMaxUser').val()},
+		contentType:'application/json',
+		dataType: 'json',
+		data: JSON.stringify(objectReq),
 		success: function(response){
 			var code = response.code;
 			if(code == 1){
 				alert("Không được để trống tên, mô tả và số người sử dụng tối đa");
 			}else{
 				alert("Tạo mới cuộc họp thành công");
+				var url = "/meeting?roomID="+ response.data.id;
+				window.location.replace(url);
 			}
 			
 		},

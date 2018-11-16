@@ -1,6 +1,7 @@
 var listUser= [];
 
 $(document).ready(function(){
+	showUserFullName();
 	var roomid = GetURLParameter('roomid');
 	var url = "/api/room/"+roomid;
 	console.log("roomid: "+roomid);
@@ -25,6 +26,16 @@ $(document).ready(function(){
 	});
 	loadData();
 });
+
+showUserFullName = function(){
+	var fullName = getCookiebyName("fullname");
+	$("#spFullName").text(fullName);
+}
+
+getCookiebyName = function(name){
+	var pair = document.cookie.match(new RegExp(name + '=([^;]+)'));
+	return !!pair ? pair[1] : null;
+};
 
 loadData = function(){
 	for (var i = 0; i < listUser.length; i++) {
