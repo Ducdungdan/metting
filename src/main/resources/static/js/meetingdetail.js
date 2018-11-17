@@ -1,5 +1,5 @@
-var listUser= [];
-
+var listUser= []; // reporter
+var listSpeaker = [];
 $(document).ready(function(){
 	showUserFullName();
 	var roomid = GetURLParameter('roomid');
@@ -13,6 +13,7 @@ $(document).ready(function(){
 			var code = response.code;
 			if(code == 0){
 				listUser = response.data.members;
+				listSpeaker = response.data.speakers;
 				$('#meeting_name').text(response.data.name);
 				console.log("Success");
 				loadData();
@@ -39,19 +40,27 @@ getCookiebyName = function(name){
 };
 
 loadData = function(){
+	// load data to selectbox
+	for (var i = 0; i < listSpeaker.length; i++) {
+		var spk = listSpeaker[i];
+		var firstName = spk.firstName;
+		var lastName = spk.lastName;
+		addSpeakerToSelectBox(firstName,lastName);
+	}
+
+	// Hien thi danh sach reporter
 	for (var i = 0; i < listUser.length; i++) {
-		var user = listUser[i];
-		var username = user.username;
-		var firstName = user.firstName;
-		var lastName = user.lastName;
-		addUserMember(firstName,lastName,username);
-		addUserMemberToSelectBox(firstName,lastName,username);
+		var reporter = listUser[i];
+		var firstName = reporter.firstName;
+		var lastName = reporter.lastName;
+		var username = reporter.username;
+		addReporterMember(firstName,lastName,username);
 	}
 }
 
 
 
-addUserMember = function(firstName, lastName, username){
+addReporterMember = function(firstName, lastName, username){
 	var nameShow = firstName+" "+ lastName + " - "+ username;
 	var userSpanElement = document.createElement('span');
 	userSpanElement.classList.add('user_span');
@@ -61,8 +70,8 @@ addUserMember = function(firstName, lastName, username){
 	lstUserArea.appendChild(userSpanElement);
 }
 
-addUserMemberToSelectBox = function(firstName, lastName, username){
-	var nameShow = firstName+" "+ lastName + " - "+ username;
+addSpeakerToSelectBox = function(firstName, lastName){
+	var nameShow = firstName+" "+ lastName;
 	var userOptionElement = document.createElement('option');
 	var userTextNode = document.createTextNode(nameShow);
 	userOptionElement.appendChild(userTextNode);
@@ -136,7 +145,7 @@ addMessage = function(message, fullName, time){
 	iconhistory.style['cursor']='-webkit-grab';
 	iconhistory.style['margin-left']='42px';
 	iconhistory.setAttribute("aria-hidden","true");
-	iconhistory.setAttribute("onclick","onclickSave()");
+	iconhistory.setAttribute("onclick","onclickShowPopup()");
 	
 	textElement.appendChild(messageText);
 	textElement.setAttribute("class","form-control");
@@ -193,4 +202,12 @@ getRoomContent = function(){
 			console.log("Server error");
 		}
 	});
+}
+
+onclickShowPopup = function(){
+	$("#popHistory").modal('show');
+}
+
+backToHome = function(){
+	window.location.replace("/default");
 }
