@@ -370,6 +370,32 @@ public class RoomController {
     	
     }
     
+    @RequestMapping(value = "/get-room-content", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> getRoomContent(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	
+    	
+    	if(!payload.containsKey("roomId")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	int roomId = (int) payload.get("roomId");
+    	
+//    	List<Map<String, Object>> contents = roomContentService.getListRoomContent(roomId, user);
+    	
+    	result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+//		result.put("data", contents);
+        return result;
+    	
+    }
+    
     
 
 
