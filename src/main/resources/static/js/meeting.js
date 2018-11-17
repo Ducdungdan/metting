@@ -9,8 +9,9 @@ $(document).ready(function(){
 		$("#hidSpeakerID").val(speakerID);
 		$("#hidFullName").val(fullName);
 		$("#message").removeAttr('disabled');
-		sendMessage();
-	
+		if($("#message").val().trim().length < 0){
+			sendMessage();
+		}
 		
 	});
 	var roomID = GetURLParameter("roomID");
@@ -18,7 +19,8 @@ $(document).ready(function(){
 	$("#meeting_name").text(roomInfor.name);
 	var meetingStartTime = roomInfor.createdDTG;
 	$("#meeting_time").text(meetingStartTime);
-	
+	// connet chat serve
+	connect();
 });
 
 // trang thai cuoc hop dang dien ra hay da ket thuc
@@ -58,50 +60,7 @@ var roleRooms =
 {value: "DELETE_MEMBER", name: "Xóa người dùng"}
 ];
 
-sendMessage = function(){
-	var message = $("#message").val();
-	$("#message").val("");
-	if (message.trim().length > 0) {
-		var fullName = $("#hidFullName").val();
-		var lstFullNameSplit = fullName.split(" ");
-		var nameDisplay = "";
-		var lstMessage = $(".lstMessage");
-		for(var i=0; i< lstFullNameSplit.length -1 ; i++){
-			nameDisplay += lstFullNameSplit[i].charAt(0);
-		}
-		nameDisplay+="."+lstFullNameSplit[lstFullNameSplit.length - 1];
-		var currentDate = getActualFullDate();
-		var messageElement = document.createElement('li');
-		messageElement.classList.add('message');
-		var avatarElement = document.createElement('i');
-		var avatarText = document.createTextNode(lstFullNameSplit[lstFullNameSplit.length - 1][0]);
-		avatarElement.appendChild(avatarText);
-		avatarElement.style['background-color'] = getAvatarColor(fullName);
-		messageElement.appendChild(avatarElement);
-		var usernameElement = document.createElement('span');
-		var usernameText = document.createTextNode(nameDisplay);
-		usernameElement.appendChild(usernameText);
-		usernameElement.style['font-weight'] = 'bold';
-		messageElement.appendChild(usernameElement);
-		var timeElement= document.createElement('span');
-		var timeText = document.createTextNode(currentDate);
-		timeElement.appendChild(timeText);
-		timeElement.style['margin-left'] ='25px';
-		timeElement.style['font-style'] ='italic';
-		messageElement.appendChild(timeElement);
-		var textElement = document.createElement('p');
-		var messageText = document.createTextNode(message);
-		textElement.appendChild(messageText);
-		messageElement.appendChild(textElement);
-		var messageArea = document.querySelector('.lstMessage');
-		messageArea.appendChild(messageElement);
-		messageArea.scrollTop = messageArea.scrollHeight;
 
-	}
-	
-	
-	
-}
 
 getAvatarColor = function (fullName){
 	var lengthFName = fullName.length;
@@ -506,23 +465,23 @@ lstUserIDRemoved= [];
 
  var roomInfor ={};
  getRoomInfor = function(roomID){
- var url = "/api/room/"+roomID;
+ 	var url = "/api/room/"+roomID;
  	$.ajax({
-		url:url,
-		type:'get',
-		success: function(response){
-			var code = response.code;
-			var token = response.token;
-			if(code == 0){
-				roomInfor = response.data;
-			}else {
-				console.log("Error trong get thong tin room theo roomid");
-			}
-		},
-		error: function () {
-			console.log("Server error");
-		}
-	});
+ 		url:url,
+ 		type:'get',
+ 		success: function(response){
+ 			var code = response.code;
+ 			var token = response.token;
+ 			if(code == 0){
+ 				roomInfor = response.data;
+ 			}else {
+ 				console.log("Error trong get thong tin room theo roomid");
+ 			}
+ 		},
+ 		error: function () {
+ 			console.log("Server error");
+ 		}
+ 	});
  }
 
  // kết thúc cuộc họp
@@ -530,43 +489,42 @@ lstUserIDRemoved= [];
  	var roomID = GetURLParameter("roomID");
  	var objectReq = {roomId: roomID};
  	$.ajax({
-		url:'/api/room/finish-room',
-		type:'post',
-		contentType:'application/json',
-		dataType: 'json',
-		data: JSON.stringify(objectReq),
-		success: function(response){
-			var code = response.code;
-			if(code == 0){
-				console.log("Success");
-				var url = "/meetingdetail?roomid="+roomID;
-				window.location.replace(url);
-			}else {
-				console.log("Faild");
-				
-			}
-		},
-		error: function () {
-			console.log("Server error");
-		}
-	});
+ 		url:'/api/room/finish-room',
+ 		type:'post',
+ 		contentType:'application/json',
+ 		dataType: 'json',
+ 		data: JSON.stringify(objectReq),
+ 		success: function(response){
+ 			var code = response.code;
+ 			if(code == 0){
+ 				console.log("Success");
+ 				var url = "/meetingdetail?roomid="+roomID;
+ 				window.location.replace(url);
+ 			}else {
+ 				console.log("Faild");
+
+ 			}
+ 		},
+ 		error: function () {
+ 			console.log("Server error");
+ 		}
+ 	});
  }
 
  // ------------------------------------------- SEND MESSAGE SOCKET -----------------------------------------------------
 
-var stompClient = null; 
+ var stompClient = null; 
 
  // connect to socket
- function connect(event) {
+ function connect() {
 
-        var socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, onConnected, onError);
-        event.preventDefault();
-}
+ 	var socket = new SockJS('/ws');
+ 	stompClient = Stomp.over(socket);
+ 	stompClient.connect({}, onConnected, onError);
+ }
 
 
-function onConnected() {
+ function onConnected() {
     // Subscribe to the Public Topic
     var urlSocket = "/topic/"+GetURLParameter("roomID");
     stompClient.subscribe(urlSocket, onMessageReceived);
@@ -574,74 +532,87 @@ function onConnected() {
     // Tell your username to the server
     var authorization = getCookiebyName("authorization");
     stompClient.send("/app/chat.addUser",
-        {},
-        JSON.stringify({data: {"authorization": authorization}, type: 'JOIN'})
-    )
+    	{},
+    	JSON.stringify({data: {"authorization": authorization}, type: 'JOIN'})
+    	)
 }
 
 function onError(error) {
-    alert("Không thể kết nối với server, vui lòng refresh trang để thử lại");
+	alert("Không thể kết nối với server, vui lòng refresh trang để thử lại");
 }
 
-function sendMessage(event) {
-    var speakerID = $("hidSpeakerID").val();
-    var roomID = GetURLParameter("roomID");
-    var content = $("#message").val().trim();
-    if(messageContent && stompClient) {
-        var chatMessage = {
-        		data: {
-        			roomId: roomID,
-        			speakerId: speakerID,
-        			content: content,
-        			startTime: new Date().getTime(),
-        			endTime: new Date().getTime() + 3600
-        		},
-            type: 'CHAT'
-        };
+function sendMessage() {
+	var speakerID = $("#hidSpeakerID").val();
+	var roomID = GetURLParameter("roomID");
+	var content = $("#message").val().trim();
+	$("#message").val("");
+	if(content && stompClient) {
+		var chatMessage = {
+			data: {
+				roomId: roomID,
+				speakerId: speakerID,
+				content: content,
+				startTime: new Date().getTime(),
+				endTime: new Date().getTime() + 3600
+			},
+			type: 'CHAT'
+		};
 
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
-    }
-    event.preventDefault();
+		stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+	}
 }
 
 function onMessageReceived(payload) {
 	console.log(payload);
-    var message = JSON.parse(payload.body);
-
-    var messageElement = document.createElement('li');
-
-    if(message.type === 'JOIN') {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' joined!';
-    } else if (message.type === 'LEAVE') {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' left!';
-    } else if (message.type === 'CHAT') {
-    	messageElement.classList.add('chat-message');
-
-    	var reporter = message.data.reporter;
-    	var speaker = message.data.speaker
-    	
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(reporter.lastName[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(reporter.firstName + " " + reporter.lastName);
-
-        messageElement.appendChild(avatarElement);
-
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(reporter.firstName + " " + reporter.lastName);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
-    } 
-
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.data.startTime + " " + message.data.endTime + " " + message.data.speaker.firstName + message.data.speaker.lastName + ": " + message.data.content);
-    textElement.appendChild(messageText);
-
-    messageElement.appendChild(textElement);
-
-    messageArea.appendChild(messageElement);
-    messageArea.scrollTop = messageArea.scrollHeight;
+	var message = JSON.parse(payload.body);
+	if (message.type === 'CHAT') {
+		var reporter = message.data.reporter;
+		var speaker = message.data.speaker;
+		var firstname_rep = reporter.firstName;
+		var lastname_rep = reporter.lastName;
+		var content = message.data.content;
+		var starttime = message.data.startTime;
+		var endtime = message.data.endTime;
+		reciveMessage(content,firstname_rep, lastname_rep, starttime, endtime);  
+	} 
 }
 
+reciveMessage = function(message, firstname, lastname, starttime, endtime){
+	
+	if (message.trim().length > 0) {
+		var fullName = firstname +" " + lastname;
+		var lstFullNameSplit = fullName.split(" ");
+		var nameDisplay = "";
+		for(var i=0; i< lstFullNameSplit.length -1 ; i++){
+			nameDisplay += lstFullNameSplit[i].charAt(0);
+		}
+		nameDisplay+="."+lstFullNameSplit[lstFullNameSplit.length - 1];
+		var currentDate = starttime +" - "+ endtime;
+		var messageElement = document.createElement('li');
+		messageElement.classList.add('message');
+		var avatarElement = document.createElement('i');
+		var avatarText = document.createTextNode(lstFullNameSplit[lstFullNameSplit.length - 1][0]);
+		avatarElement.appendChild(avatarText);
+		avatarElement.style['background-color'] = getAvatarColor(fullName);
+		messageElement.appendChild(avatarElement);
+		var usernameElement = document.createElement('span');
+		var usernameText = document.createTextNode(nameDisplay);
+		usernameElement.appendChild(usernameText);
+		usernameElement.style['font-weight'] = 'bold';
+		messageElement.appendChild(usernameElement);
+		var timeElement= document.createElement('span');
+		var timeText = document.createTextNode(currentDate);
+		timeElement.appendChild(timeText);
+		timeElement.style['margin-left'] ='25px';
+		timeElement.style['font-style'] ='italic';
+		messageElement.appendChild(timeElement);
+		var textElement = document.createElement('p');
+		var messageText = document.createTextNode(message);
+		textElement.appendChild(messageText);
+		messageElement.appendChild(textElement);
+		var messageArea = document.querySelector('.lstMessage');
+		messageArea.appendChild(messageElement);
+		messageArea.scrollTop = messageArea.scrollHeight;
+
+	}
+}
