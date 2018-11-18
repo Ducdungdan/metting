@@ -17,11 +17,17 @@
 </head>
 <body>
 	<div class="wraper">
-		<div class="header">
-			<h3
-				style="text-align: center; padding: 10px; font-weight: bold; color: blue;">
-				RECORDING MEETING SYSTEM</h3>
-		</div>
+		<div class="header" style="padding-top: 1px; height: 78px;">
+			<h4
+			style="text-align: center;font-weight: bold; color: blue;">RECORDING MEETING SYSTEM</h4>
+			<div class="divlogout" style="float: right; padding-right: 15px;">
+				Xin chào: <span id="spFullName"></span>
+				<button type="button" class="btn btn-primary" onclick="logout()" style="display: inline;" title="Đăng xuất">
+					<i class="fa fa-sign-out" aria-hidden="true"></i>
+				</button>
+			</div>
+		
+	</div>
 		<div class="content">
 			<div class="row">
 			<div class="col-md-3 col-xs-12">
@@ -53,6 +59,7 @@
 			<h4>Hệ thống ghi biển bản cuộc họp. Phát triển bởi nhóm DSD_09</h4>
 		</div>
 			<script type="text/javascript" th:src="@{/js/meeting.js}"></script>
+			<script type="text/javascript" th:src="@{/js/logout.js}"></script>
 </div>
 
 </body>

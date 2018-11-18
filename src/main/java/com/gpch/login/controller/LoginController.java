@@ -31,24 +31,41 @@ public class LoginController {
     
     @Autowired
     private JwtService jwtService;
-//
-//    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
-//    public ModelAndView login(){
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("login");
-//        return modelAndView;
-//    }
-//
-//
-//    @RequestMapping(value="/registration", method = RequestMethod.GET)
-//    public ModelAndView registration(){
-//        ModelAndView modelAndView = new ModelAndView();
-//        User user = new User();
-//        modelAndView.addObject("user", user);
-//        modelAndView.setViewName("registration");
-//        return modelAndView;
-//    }
-//
+
+    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
+    public ModelAndView login(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/default"}, method = RequestMethod.GET)
+    public ModelAndView navigateToDefault(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("default");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/meeting"}, method = RequestMethod.GET)
+    public ModelAndView navigateToMeeting(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("meeting");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/userinformation"}, method = RequestMethod.GET)
+    public ModelAndView userinformation(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("userinformation");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value= {"/meetingdetail"}, method = RequestMethod.GET)
+    public ModelAndView meetingdetail(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("meetingdetail");
+        return modelAndView;
+    }
     
     @RequestMapping(value = "/api/registration", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
     public @ResponseBody Map<String, ? extends Object> createNewUser(@Valid User user, BindingResult bindingResult) {

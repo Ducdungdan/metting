@@ -69,13 +69,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       return super.authenticationManager();
     }
     protected void configure(HttpSecurity http) throws Exception {
+
       // Disable crsf cho đường dẫn /rest/**
       http.csrf().ignoringAntMatchers("/api/room/**");
       http.authorizeRequests().antMatchers("/api/login").permitAll();
+      http.authorizeRequests().antMatchers("/login").permitAll();
       http.antMatcher("/room/**").httpBasic().authenticationEntryPoint(restServicesEntryPoint()).and()
           .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
           .antMatchers(HttpMethod.POST, "/api/room/**").access("hasRole('CUSTOMER')")
           .antMatchers(HttpMethod.GET, "/api/room/**").access("hasRole('CUSTOMER')")
+          .antMatchers(HttpMethod.GET, "/default").access("hasRole('CUSTOMER')")
+          .antMatchers(HttpMethod.GET, "/meeting").access("hasRole('CUSTOMER')")
+          .antMatchers(HttpMethod.GET, "/userinformation").access("hasRole('CUSTOMER')")
+          .antMatchers(HttpMethod.GET, "/meetingdetail").access("hasRole('CUSTOMER')")
         .antMatchers(HttpMethod.POST, "/rest/**").access("hasRole('ROLE_ADMIN')")
         .antMatchers(HttpMethod.DELETE, "/rest/**").access("hasRole('ROLE_ADMIN')").and()
         .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)

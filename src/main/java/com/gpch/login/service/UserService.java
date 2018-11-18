@@ -56,7 +56,6 @@ public class UserService{
     	User user = userRepository.findByUsername(username);
     	if(user==null) return null;
     	Boolean check = bCryptPasswordEncoder.matches(password, user.getPassword());
-    	
     	if(check) {
     		return user;
     	} else {
