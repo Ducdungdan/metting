@@ -56,10 +56,10 @@ xmlns:th="http://www.thymeleaf.org">
 			<div class="content_right">
 				<div class="btn_function_area">
 					<div class="function" style="text-align: center; margin-top: 12px;">
-						<button type="button" class="btn btn-primary" style="width: 23%" data-toggle="modal" data-target="#popAddNewMeeting" onclick="loadData2Popup()" title="Thêm người dùng">
+						<button type="button" id="addUser" class="btn btn-primary" style="width: 23%" data-toggle="modal" data-target="#popAddNewMeeting" onclick="loadData2Popup()" title="Thêm người dùng">
 							<i class="fa fa-user-plus" aria-hidden="true"></i>
 						</button>
-						<button type="button" class="btn btn-danger" style="width: 23%" data-toggle="modal" data-target="#popRemoveMember" onclick="loadData2PopupRemove()" title="Xóa ngươi dùng">
+						<button type="button"  id="removeUser" class="btn btn-danger" style="width: 23%" data-toggle="modal" data-target="#popRemoveMember" onclick="loadData2PopupRemove()" title="Xóa ngươi dùng">
 							<i class="fa fa-ban" aria-hidden="true"></i>
 						</button>
 						<button type="button" class="btn btn-infor" style="width: 23%" data-toggle="modal" data-target="#popShareCode" title="Share mã code" onclick="loadPermission2PopupShareCode()">
@@ -69,25 +69,15 @@ xmlns:th="http://www.thymeleaf.org">
 					</div>
 				</div>
 				<div class="lst_user">
-					<ul id="speaker" style="height: 57%; margin-bottom: 8px; border-bottom: 1px solid darkgray;">
-						<li class="user">
-							<input type="hidden" value="17">
-							<input type="hidden" value="Nguyen Dinh Thang">
-							<a href="#"><i style="background-color: rgb(255, 152, 0);">T</i></a>	
-							<span class="style_name">ND.Thang</span>
-							<span style="float: right;"><i class=" fa fa-circle" aria-hidden="true" style="color: greenyellow; display: contents;"></i></span>
-						</li>
+					<i class="fa fa-hand-o-right" aria-hidden="true"></i> Danh sách speaker
+					<ul id="speaker" style="height: 50%; margin-bottom: 8px; border-bottom: 1px solid darkgray;">
+						
 					</ul>
 
-					<ul id="users"  style="height: 40%; border-bottom: 1px solid darkgray;">
-						<li class="user">
-							<input type="hidden" value="17">
-							<input type="hidden" value="Nguyen Dinh Thang">
-							<a href="#"><i style="background-color: rgb(255, 152, 0);">T</i></a>	
-							<span class="style_name">ND.Thang</span>
-							<span style="float: right;"><i class=" fa fa-circle" aria-hidden="true" style="color: greenyellow; display: contents;"></i></span>
+					<i class="fa fa-hand-o-right" aria-hidden="true"></i> Danh sách reporter
 
-						</li>
+					<ul id="users"  style="height: 40%; border-bottom: 1px solid darkgray;">
+						
 					</ul>
 				</div>
 			</div>
@@ -237,6 +227,7 @@ xmlns:th="http://www.thymeleaf.org">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 		<script type="text/javascript" th:src="@{/js/logout.js}"></script>
+		<script type="text/javascript" th:src="@{/js/permission.js}"></script>
 		<!-- <script type="text/javascript" th:src="@{/js/meetingchat.js}"></script> -->
 		<script type="text/javascript">
 			$(".chosen").chosen();

@@ -40,7 +40,7 @@ xmlns:th="http://www.thymeleaf.org">
 					</ul>
 				</div>
 				<div class="sending">
-					<button class="btn btn-primary">
+					<button class="btn btn-primary" id="export">
 						<i class="fa fa-file-excel-o" aria-hidden="true">  Xuất báo cáo</i> 
 					</button> 
 					<button class="btn btn-secondary" onclick="backToHome()">
@@ -101,6 +101,7 @@ xmlns:th="http://www.thymeleaf.org">
 		</div>
 		<script type="text/javascript" th:src="@{/js/meetingdetail.js}"></script>
 		<script type="text/javascript" th:src="@{/js/logout.js}"></script>
+		<script type="text/javascript" th:src="@{/js/permission.js}"></script>
 	</div>
 	<div class="modal fade" id="popHistory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">

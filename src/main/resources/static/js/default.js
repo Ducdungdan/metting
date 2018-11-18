@@ -9,7 +9,6 @@ var colors = [
 $(document).ready(function(){
 
 	showUserFullName();
-
 	$.ajax({
 		url:'/api/room/joined',
 		type:'get',
@@ -27,8 +26,6 @@ $(document).ready(function(){
 			console.log("Server error");
 		}
 	});
-	
-	loadData();
 });
 
 showUserFullName = function(){
@@ -47,9 +44,10 @@ loadData = function(){
 	for (var i = 0; i < listRoom.length; i++) {
 		var id = listRoom[i].id;
 		var number = listRoom[i].number;
-		var time = listRoom[i].time;
+		var time = listRoom[i].createdDTG +" - " + listRoom[i].updatedDTG;
 		var name = listRoom[i].name;
-		addMettingRoom(id,number,time,name);
+		var roles = listRoom[i].roles;
+		addMettingRoom(id,number,time,name, roles);
 	}
 }
 
@@ -64,10 +62,10 @@ searchRoom= function(){
 	}
 }
 
-addMettingRoom = function(idroom, numberOfUser, time, name){
+addMettingRoom = function(idroom, numberOfUser, time, name, roles){
 
 	var roomElement = document.createElement('li');
-	roomElement.setAttribute("onclick","navigateToDetail(" +idroom+")");
+	roomElement.setAttribute("onclick","navigateToDetail(" +idroom+","+roles+")");
 	var idMeetingRoomLi = "li_mr_" + idroom;
 	roomElement.setAttribute("id",idMeetingRoomLi);
 	roomElement.classList.add('meetingroom');
@@ -104,9 +102,10 @@ closeReporter = function(id){
 }
 
 
-navigateToDetail = function(idroom){
+navigateToDetail = function(idroom, roles){
 	
 	var url = "/meetingdetail?roomid="+idroom;
+	document.cookie = "roles="+roles;
 	window.location.replace(url);
 }
 

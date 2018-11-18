@@ -25,6 +25,8 @@ $(document).ready(function(){
 			console.log("Server error");
 		}
 	});
+
+	setPermission();
 	// hien thi thon tin chat
 	getRoomContent();
 });
@@ -210,4 +212,10 @@ onclickShowPopup = function(){
 
 backToHome = function(){
 	window.location.replace("/default");
+}
+
+// ---------------------------------------------- Phan quyen ----------------------------------
+setPermission = function(){
+	$("#export").addClass("displayhidden");
+	$("#export").addClass("per_EXPORT");
 }

@@ -1,6 +1,17 @@
 $(document).ready(function(){
 	showUserFullName();
-	$("#users li").click(function(){
+	var roomID = GetURLParameter("roomID");
+	getRoomInfor(roomID);
+	$("#meeting_name").text(roomInfor.name);
+	var meetingStartTime = roomInfor.createdDTG;
+	$("#meeting_time").text(meetingStartTime);
+	setPersmisson();
+	//--------
+	
+	//-------------
+
+
+	$("#speaker li").click(function(){
 		removeActive();
 		$(this).addClass("active");
 		var lstChildren = $(this).children();
@@ -14,14 +25,19 @@ $(document).ready(function(){
 		}
 		
 	});
-	var roomID = GetURLParameter("roomID");
-	getRoomInfor(roomID);
-	$("#meeting_name").text(roomInfor.name);
-	var meetingStartTime = roomInfor.createdDTG;
-	$("#meeting_time").text(meetingStartTime);
 	// connet chat serve
 	connect();
 });
+
+var  list = [
+	{firstname: "Nguyen Van", lastname:"Nam", speakerid: 13},
+	{firstname: "Le Van", lastname:"Duc", speakerid: 13},
+	{firstname: "Nguyen Van", lastname:"Tuyen", speakerid: 13},
+	{firstname: "Nguyen Dinh", lastname:"Thang", speakerid: 13},
+	{firstname: "Le Bao", lastname:"Chi", speakerid: 13},
+	{firstname: "Le Van", lastname:"Duc", speakerid: 13},
+
+]
 
 // trang thai cuoc hop dang dien ra hay da ket thuc
 var active = 0;
@@ -30,7 +46,7 @@ loadData = function (){
 	loadData2Popup();
 }
 removeActive = function(){
-	var lstLi = $("#users").children();
+	var lstLi = $("#speaker").children();
 	for(var i=0; i< lstLi.length; i++){
 		lstLi[i].classList.remove("active");
 	}
@@ -474,6 +490,16 @@ lstUserIDRemoved= [];
  			var token = response.token;
  			if(code == 0){
  				roomInfor = response.data;
+ 				var lstSpeaker = response.data.speakers; // lay danh sach speaker trong room
+ 				for(var i= 0; i< lstSpeaker.length; i++){
+ 					var item = lstSpeaker[i];
+ 					appendSpeakerToList(item.firstName, item.lastName, item.id);
+ 				}
+ 				var lstReporter = response.data.members; // lay danh sach reporter trong room
+ 				for(var i=0; i< lstReporter.length; i++){
+ 					var item = lstReporter[i];
+ 					appendReporterToList(item.firstName, item.lastName, item.username);
+ 				}
  			}else {
  				console.log("Error trong get thong tin room theo roomid");
  			}
@@ -615,4 +641,68 @@ reciveMessage = function(message, firstname, lastname, starttime, endtime){
 		messageArea.scrollTop = messageArea.scrollHeight;
 
 	}
+}
+//----------------------------------- Phan quyen --------------------------------------------
+setPersmisson = function(){
+	$("#addUser").addClass("displayhidden");
+	$("#addUser").addClass("per_ADD_MEMBER");
+	$("#removeUser").addClass("displayhidden");
+	$("#removeUser").addClass("per_DELETE_MEMBER");
+
+}
+
+// hien thi danh sach cac speaker trong cuoc hop ỏ thanh bên phải	
+appendSpeakerToList  = function(firstname, lastname, speakerid){
+	var speakerElement = document.createElement("li");
+	speakerElement.classList.add("user");
+	var spIDElement = document.createElement("input");
+	spIDElement.setAttribute("type","hidden");
+	spIDElement.setAttribute("value",speakerid);
+	speakerElement.appendChild(spIDElement);
+	var spNameElement = document.createElement("input");
+	spNameElement.setAttribute("type","hidden");
+	spNameElement.setAttribute("value",firstname +" " + lastname);
+	speakerElement.appendChild(spNameElement);
+	var avatarElementA = document.createElement("a");
+	avatarElementA.setAttribute("href","#");
+	var avatarElement = document.createElement("i");
+	avatarElement.style['background-color'] = getAvatarColor(firstname +" "+lastname);
+	var avatarText  = document.createTextNode(lastname[0]);
+	avatarElement.appendChild(avatarText);
+	avatarElementA.appendChild(avatarElement);
+	speakerElement.appendChild(avatarElementA);
+	var nameDisplay =document.createElement("span");
+	nameDisplay.classList.add("style_name");
+	var nameText = document.createTextNode(firstname +" " + lastname);
+	nameDisplay.appendChild(nameText);
+	speakerElement.appendChild(nameDisplay);
+	var ulSpeaker = document.querySelector('#speaker');
+	ulSpeaker.appendChild(speakerElement);
+	speakerElement.scrollTop = speakerElement.scrollHeight;
+
+}
+
+appendReporterToList = function(firstname, lastname, username){
+	var reporterElement = document.createElement("li");
+	reporterElement.classList.add("user");
+	var avatarElementA = document.createElement("a");
+	avatarElementA.setAttribute("href","#");
+	var avatarElement = document.createElement("i");
+	avatarElement.style['background-color'] = getAvatarColor(firstname +" "+lastname);
+	var avatarText  = document.createTextNode(lastname[0]);
+	avatarElement.appendChild(avatarText);
+	avatarElementA.appendChild(avatarElement);
+	reporterElement.appendChild(avatarElementA);
+	var nameDisplay =document.createElement("span");
+	nameDisplay.classList.add("style_name");
+	var nameText = document.createTextNode(firstname +" " + lastname +" - "+ username);
+	nameDisplay.appendChild(nameText);
+	reporterElement.appendChild(nameDisplay);
+	var ulReporter = document.querySelector('#users');
+	ulReporter.appendChild(reporterElement);
+	reporterElement.scrollTop = reporterElement.scrollHeight;
+}
+
+abc = function(){
+	appendReporterToList("Nguyen Dinh","Thang", "thangnd");
 }

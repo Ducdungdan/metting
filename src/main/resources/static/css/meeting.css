@@ -245,3 +245,7 @@ body {
     display: inline-block;
     margin: 1px;
 }
+
+.displayhidden {
+	display: none !important;
+}
