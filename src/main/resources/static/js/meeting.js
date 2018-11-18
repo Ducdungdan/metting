@@ -703,6 +703,3 @@ appendReporterToList = function(firstname, lastname, username){
 	reporterElement.scrollTop = reporterElement.scrollHeight;
 }
 
-abc = function(){
-	appendReporterToList("Nguyen Dinh","Thang", "thangnd");
-}
