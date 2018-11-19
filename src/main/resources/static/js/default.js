@@ -44,13 +44,35 @@ loadData = function(){
 	for (var i = 0; i < listRoom.length; i++) {
 		var id = listRoom[i].id;
 		var number = listRoom[i].number;
-		var time = listRoom[i].createdDTG +" - " + listRoom[i].updatedDTG;
+		var time = getTimeShow(new Date(listRoom[i].createdDTG)) +" - " + getTimeShow(new Date (listRoom[i].updatedDTG));
 		var name = listRoom[i].name;
 		var roles = listRoom[i].roles;
-		addMettingRoom(id,number,time,name, roles);
+		var lstRolesName = [];
+		var active = listRoom[i].active;
+		for (var i = 0; i < roles.length; i++) {
+			lstRolesName.push(roles[i].name);
+		}
+		addMettingRoom(id,number,time,name, JSON.stringify(lstRolesName),active);
 	}
 }
 
+getTimeShow = function(time){
+ 	
+	var day = addZero(time.getDate());
+	var month = addZero(time.getMonth()+1);
+	var year = addZero(time.getFullYear());
+	var h = addZero(time.getHours());
+	var m = addZero(time.getMinutes());
+	var s = addZero(time.getSeconds());
+	return day + ". " + month + ". " + year + " (" + h + ":" + m + ":" + s +")";
+ }
+
+ function addZero(i) {
+	if (i < 10) {
+		i = "0" + i;
+	}
+	return i;
+}
 searchRoom= function(){
 	var key = $("#txtSearch").val();
 	for (var i = 0; i < listRoom.length; i++) {
@@ -62,10 +84,10 @@ searchRoom= function(){
 	}
 }
 
-addMettingRoom = function(idroom, numberOfUser, time, name, roles){
+addMettingRoom = function(idroom, numberOfUser, time, name, roles, active){
 
 	var roomElement = document.createElement('li');
-	roomElement.setAttribute("onclick","navigateToDetail(" +idroom+","+roles+")");
+	roomElement.setAttribute("onclick","navigateToDetail("+ active+"," +idroom+","+roles+")");
 	var idMeetingRoomLi = "li_mr_" + idroom;
 	roomElement.setAttribute("id",idMeetingRoomLi);
 	roomElement.classList.add('meetingroom');
@@ -102,9 +124,13 @@ closeReporter = function(id){
 }
 
 
-navigateToDetail = function(idroom, roles){
-	
-	var url = "/meetingdetail?roomid="+idroom;
+navigateToDetail = function(active,idroom, roles){	
+	var url = ""; 
+	if(active == 1){
+		url="/meeting?roomID="+idroom;
+	}else{
+		url ="/meetingdetail?roomid="+idroom;
+	}
 	document.cookie = "roles="+roles;
 	window.location.replace(url);
 }
@@ -112,7 +138,8 @@ navigateToDetail = function(idroom, roles){
 // tao mot cuoc hop moi
 addRoom = function(){
 	var speakers = [];
-	var objectReq = {name: $('#txtMeetingName').val(), description: $('#txtMeetingDescription').val(), maxUser: $('#txtMaxUser').val(), speakers: speakers }
+	var maxuser = parseInt($('#txtMaxUser').val());
+	var objectReq = {name: $('#txtMeetingName').val(), description: $('#txtMeetingDescription').val(), maxUser: maxuser , speakers: speakers }
 	$.ajax({
 		url:'/api/room/create',
 		type:'post',

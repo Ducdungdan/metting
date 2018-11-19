@@ -15,6 +15,8 @@ $(document).ready(function(){
 				listUser = response.data.members;
 				listSpeaker = response.data.speakers;
 				$('#meeting_name').text(response.data.name);
+				var time = new Date(response.data.createdDTG);
+				$('#meeting_time').text(getTimeShow(time));
 				console.log("Success");
 				loadData();
 			}else {
@@ -30,6 +32,25 @@ $(document).ready(function(){
 	// hien thi thon tin chat
 	getRoomContent();
 });
+
+getTimeShow = function(time){
+ 	
+	var day = addZero(time.getDate());
+	var month = addZero(time.getMonth()+1);
+	var year = addZero(time.getFullYear());
+	var h = addZero(time.getHours());
+	var m = addZero(time.getMinutes());
+	var s = addZero(time.getSeconds());
+	return day + ". " + month + ". " + year + " (" + h + ":" + m + ":" + s +")";
+ }
+
+ function addZero(i) {
+	if (i < 10) {
+		i = "0" + i;
+	}
+	return i;
+}
+
 
 showUserFullName = function(){
 	var fullName = getCookiebyName("fullname");
@@ -191,7 +212,7 @@ getRoomContent = function(){
 					var content = listContent[i];
 					var message = content.content;
 					var fullname = content.speaker.firstName + content.speaker.lastName;
-					var time = content.startTime + " - " + content.endTime;
+					var time = getTimeShow(new Date(content.startTime))  + " - " + getTimeShow(new Date(content.endTime)) ;
 					addMessage(message,fullname,time);
 				}
 

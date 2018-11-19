@@ -2,14 +2,19 @@ $(document).ready(function(){
 	showUserFullName();
 	var roomID = GetURLParameter("roomID");
 	getRoomInfor(roomID);
-	$("#meeting_name").text(roomInfor.name);
-	var meetingStartTime = roomInfor.createdDTG;
-	$("#meeting_time").text(meetingStartTime);
+	getRoomContent();
 	setPersmisson();
 	//--------
 	
 	//-------------
 
+
+	
+	// connet chat serve
+	connect();
+});
+
+liSpeakerClick =  function(){
 
 	$("#speaker li").click(function(){
 		removeActive();
@@ -23,21 +28,10 @@ $(document).ready(function(){
 		if($("#message").val().trim().length < 0){
 			sendMessage();
 		}
-		
+
 	});
-	// connet chat serve
-	connect();
-});
+}
 
-var  list = [
-	{firstname: "Nguyen Van", lastname:"Nam", speakerid: 13},
-	{firstname: "Le Van", lastname:"Duc", speakerid: 13},
-	{firstname: "Nguyen Van", lastname:"Tuyen", speakerid: 13},
-	{firstname: "Nguyen Dinh", lastname:"Thang", speakerid: 13},
-	{firstname: "Le Bao", lastname:"Chi", speakerid: 13},
-	{firstname: "Le Van", lastname:"Duc", speakerid: 13},
-
-]
 
 // trang thai cuoc hop dang dien ra hay da ket thuc
 var active = 0;
@@ -245,31 +239,11 @@ removeSpeaker = function(id){
 	}
 }
 
-addListUser = function(){
-	var spk=  addListSpeaker();
-	if (spk) {
-		var rpk= addListReporter();
-		if(!rpk){
-			alert("Đã xảy ra lỗi trong quá trình thêm reporter");
-		}else{
-			alert("Đã thêm người thành công");
-			var url = "/meeting?roomID="+  GetURLParameter("roomID");
-			window.location.replace(url);
-		}
-	}else{
-		alert("Đã xảy ra lỗi trong quá trình thêm speaker");
-	}
-	
-
-}
-
-addListReporter = function(){
-	var roomID = GetURLParameter("roomID");
-	var objRoomReq = {roomID: roomID, members:lstReporters};
-	console.log(objRoomReq);
-	var objectReq = {roomId: roomID, members:lstReporters};
+getRoomContent = function(){
+	var roomid = GetURLParameter('roomID');
+	var objectReq = {roomId : parseInt(roomid)};
 	$.ajax({
-		url:'/api/room/add-members',
+		url:'/api/room/get-room-content',
 		type:'post',
 		contentType:'application/json',
 		dataType: 'json',
@@ -277,8 +251,17 @@ addListReporter = function(){
 		success: function(response){
 			var code = response.code;
 			if(code == 0){
-				console.log("Success");
-				return true;
+				var listContent = response.data;
+				for(var i = 0; i< listContent.length; i++){
+					var content = listContent[i];
+					var message = content.content;
+					var firstname = content.speaker.firstName;
+					var lastname =  content.speaker.lastName;
+					var starttime = getTimeShow(new Date(content.startTime));
+					var endtime = getTimeShow(new Date(content.endTime));
+					reciveMessage(message,firstname,lastname,starttime,endtime);
+				}
+
 			}else {
 				console.log("Faild");
 				return false;
@@ -290,8 +273,39 @@ addListReporter = function(){
 	});
 }
 
+addListUser = function(){
+	addListSpeaker();
+}
+
+addListReporter = function(){
+	var roomID = GetURLParameter("roomID");
+	var objectReq = {roomId: roomID, members:lstReporters};
+	$.ajax({
+		url:'/api/room/add-members',
+		type:'post',
+		contentType:'application/json',
+		dataType: 'json',
+		data: JSON.stringify(objectReq),
+		success: function(response){
+			var code = response.code;
+			if(code == 0){
+				console.log("Success");
+				alert("Đã thêm người thành công");
+				var url = "/meeting?roomID="+  GetURLParameter("roomID");
+				window.location.replace(url);
+			}else {
+				console.log("Faild");
+				alert("Đã xảy ra lỗi trong quá trình thêm reporter");
+			}
+		},
+		error: function () {
+			console.log("Server error");
+		}
+	});
+}
+
 addListSpeaker = function(){
-	var roomId = GetURLParameter("roomID");
+	var roomId = parseInt(GetURLParameter("roomID"));
 	var listSpeakerAdd =[];
 	for (var i = 0; i < lstSpeaker.length; i++) {
 		var spk = lstSpeaker[i];
@@ -306,13 +320,22 @@ addListSpeaker = function(){
 		data: JSON.stringify(objectReq),
 		success: function(response){
 			var code = response.code;
+			var status = true;
 			if(code == 0){
 				console.log("Success");
-				return true;
+				status =  true;
 			}else {
 				console.log("Faild");
-				return false;
+				status =  false;
 			}
+
+			if (status == true) {
+				addListReporter();
+				
+			}else{
+				alert("Đã xảy ra lỗi trong quá trình thêm speaker");
+			}
+
 		},
 		error: function () {
 			console.log("Server error");
@@ -435,7 +458,7 @@ lstUserIDRemoved= [];
  }
 
  createCode = function(){
- 	var roomID =  GetURLParameter("roomID");
+ 	var roomID =  parseInt(GetURLParameter("roomID"));
  	var roles = $("#permissionShare").chosen().val();
  	var objectReq = {roomId: roomID, roles: roles};
  	console.log(objectReq);
@@ -454,7 +477,7 @@ lstUserIDRemoved= [];
  		data: JSON.stringify(objectReq),
  		success: function(response){
  			
- 			if(code == 0){
+ 			if(response.code == 0){
  				console.log("Success");
  				var code = response.data.code;
  				addRowShareCode(rolesText,code);
@@ -490,6 +513,9 @@ lstUserIDRemoved= [];
  			var token = response.token;
  			if(code == 0){
  				roomInfor = response.data;
+ 				$("#meeting_name").text(roomInfor.name);
+ 				var meetingStartTime = getTimeShow(new Date(roomInfor.createdDTG));
+ 				$("#meeting_time").text(meetingStartTime);
  				var lstSpeaker = response.data.speakers; // lay danh sach speaker trong room
  				for(var i= 0; i< lstSpeaker.length; i++){
  					var item = lstSpeaker[i];
@@ -500,6 +526,7 @@ lstUserIDRemoved= [];
  					var item = lstReporter[i];
  					appendReporterToList(item.firstName, item.lastName, item.username);
  				}
+ 				liSpeakerClick();
  			}else {
  				console.log("Error trong get thong tin room theo roomid");
  			}
@@ -510,9 +537,20 @@ lstUserIDRemoved= [];
  	});
  }
 
+ getTimeShow = function(time){
+ 	
+ 	var day = addZero(time.getDate());
+ 	var month = addZero(time.getMonth()+1);
+ 	var year = addZero(time.getFullYear());
+ 	var h = addZero(time.getHours());
+ 	var m = addZero(time.getMinutes());
+ 	var s = addZero(time.getSeconds());
+ 	return day + ". " + month + ". " + year + " (" + h + ":" + m + ":" + s +")";
+ }
+
  // kết thúc cuộc họp
  finishMeeting = function(){
- 	var roomID = GetURLParameter("roomID");
+ 	var roomID = parseInt(GetURLParameter("roomID"));
  	var objectReq = {roomId: roomID};
  	$.ajax({
  		url:'/api/room/finish-room',
@@ -568,8 +606,8 @@ function onError(error) {
 }
 
 function sendMessage() {
-	var speakerID = $("#hidSpeakerID").val();
-	var roomID = GetURLParameter("roomID");
+	var speakerID = parseInt($("#hidSpeakerID").val());
+	var roomID = parseInt(GetURLParameter("roomID"));
 	var content = $("#message").val().trim();
 	$("#message").val("");
 	if(content && stompClient) {
@@ -594,12 +632,12 @@ function onMessageReceived(payload) {
 	if (message.type === 'CHAT') {
 		var reporter = message.data.reporter;
 		var speaker = message.data.speaker;
-		var firstname_rep = reporter.firstName;
-		var lastname_rep = reporter.lastName;
+		var firstname_spk = speaker.firstName;
+		var lastname_spk = speaker.lastName;
 		var content = message.data.content;
-		var starttime = message.data.startTime;
-		var endtime = message.data.endTime;
-		reciveMessage(content,firstname_rep, lastname_rep, starttime, endtime);  
+		var starttime = getTimeShow(new Date (message.data.startTime));
+		var endtime = getTimeShow(new Date (message.data.endTime));
+		reciveMessage(content,firstname_spk, lastname_spk, starttime, endtime);  
 	} 
 }
 
@@ -648,6 +686,12 @@ setPersmisson = function(){
 	$("#addUser").addClass("per_ADD_MEMBER");
 	$("#removeUser").addClass("displayhidden");
 	$("#removeUser").addClass("per_DELETE_MEMBER");
+	$("#message").addClass("displayhidden");
+	$("#message").addClass("per_WRITE");
+	$("#btn_send").addClass("displayhidden");
+	$("#btn_send").addClass("per_WRITE");
+
+
 
 }
 
@@ -664,6 +708,7 @@ appendSpeakerToList  = function(firstname, lastname, speakerid){
 	spNameElement.setAttribute("value",firstname +" " + lastname);
 	speakerElement.appendChild(spNameElement);
 	var avatarElementA = document.createElement("a");
+	avatarElementA.setAttribute("onclick","liSpeakerClick("+firstname+" " +lastname+"," +speakerid +")");
 	avatarElementA.setAttribute("href","#");
 	var avatarElement = document.createElement("i");
 	avatarElement.style['background-color'] = getAvatarColor(firstname +" "+lastname);
