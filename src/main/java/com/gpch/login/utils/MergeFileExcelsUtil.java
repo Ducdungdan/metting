@@ -63,6 +63,14 @@ public class MergeFileExcelsUtil {
                     break;
                 }
             }
+            if(i == result.size()-1){
+                Vector<String> v = new Vector<>();
+                v.add(result.get(i).get(0));
+                v.add(result.get(i).get(1));
+                v.add(result.get(i).get(2));
+                v.add(result.get(i).get(3));
+                resultFinal.add(v);
+            }
         }
         return resultFinal;
     }

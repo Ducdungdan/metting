@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +43,11 @@ public class UploadController {
             return "upload";
         }
         String rootPath = System.getProperty("user.dir");
-        UPLOADED_FOLDER = rootPath + "/src/main/resources/upload/";
+        UPLOADED_FOLDER = rootPath + "/src/main/resources/upload/room_1/";
+        File dir = new File(UPLOADED_FOLDER);
+        if(!dir.exists()){
+            dir.mkdir();
+        }
         try {
 
             // Get the file and save it somewhere
