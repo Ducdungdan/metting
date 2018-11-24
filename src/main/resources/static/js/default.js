@@ -14,6 +14,7 @@ $(document).ready(function(){
 		type:'get',
 		success: function(response){
 			var code = response.code;
+			console.log(response);
 			if(code == 0){
 				listRoom = response.data;
 				console.log("Success");
@@ -49,8 +50,8 @@ loadData = function(){
 		var roles = listRoom[i].roles;
 		var lstRolesName = [];
 		var active = listRoom[i].active;
-		for (var i = 0; i < roles.length; i++) {
-			lstRolesName.push(roles[i].name);
+		for (var j = 0; j < roles.length; j++) {
+			lstRolesName.push(roles[j].name);
 		}
 		addMettingRoom(id,number,time,name, JSON.stringify(lstRolesName),active);
 	}

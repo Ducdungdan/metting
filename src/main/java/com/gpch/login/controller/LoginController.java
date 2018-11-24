@@ -31,6 +31,13 @@ public class LoginController {
     
     @Autowired
     private JwtService jwtService;
+    
+    @RequestMapping(value= {"/test-socket"}, method = RequestMethod.GET)
+    public ModelAndView testSocket(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("index");
+        return modelAndView;
+    }
 
     @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
     public ModelAndView login(){
@@ -112,7 +119,7 @@ public class LoginController {
           httpStatus = HttpStatus.OK;
           message = httpStatus.name();
           code=0;
-          
+          data.put("userId", user.getId());
           data.put("username", user.getUsername());
           data.put("firstName", user.getFirstName());
           data.put("lastName", user.getLastName());

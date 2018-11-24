@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import info.debatty.java.stringsimilarity.Damerau;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -537,7 +538,7 @@ public class RoomService{
 		}
 		
 		for(User u: allUser) {
-			if(u.getActive()==1&&listUserInRoom.indexOf(u.getId()) != -1&&u.getId()!=userId) {
+			if(u.getActive()==1&&listUserInRoom.indexOf(u.getId()) == -1&&u.getId()!=userId) {
 				Map<String, Object> us = new HashMap<String, Object>();
 				
 				us.put("userId", u.getId());
@@ -596,5 +597,101 @@ public List<Map<String, Object>> getReporters(int userId) {
 		}
 		return null;
 	}
+    
+    private final int latency = 20; //0.2s
+    private final int minDistance = 10;
+    private final int minSegment = 1500; //tg ngat doan 15s
+    private final String delimiters = "\\s+|,\\s*|\\.\\s*";
+    
+    public List<Map<String, Object>> mergeStenographTranscript(List<Map<String, Object>> listStenograph, List<Map<String, Object>> listTranscript) {
+    	List<Map<String, Object>> r = new ArrayList<Map<String,Object>>();
+    	listStenograph.sort((Map<String, Object> o1, Map<String, Object> o2)->(int)o1.get("start")-(int)o2.get("start"));
+    	listTranscript.sort((Map<String, Object> o1, Map<String, Object> o2)->(int)o1.get("start")-(int)o2.get("start"));
+    	
+    	int i = 0, j = 0;
+    	Map<String, Object> temp = null;
+    	while(i < listStenograph.size() && j < listTranscript.size()) {
+    		Map<String, Object> stenograph = listStenograph.get(i);
+    		Map<String, Object> transcript = listTranscript.get(j);
+    		String contentStenograph = (String)stenograph.get("content");
+    		String contentTranscript = (String)transcript.get("content");
+    		
+    		
+    		long start1 = (long) stenograph.get("start");
+    		long end1 = (long) stenograph.get("end");
+    		long start2 = (long) stenograph.get("start");
+    		long end2 = (long) stenograph.get("end");
+    		
+    		long s = 0;
+    		long e = 0;
+    		String c = "";
+    		
+    		
+    		
+    		if(start1 < start2) {
+    			s = start1;
+    			e = end1;
+    			c = contentStenograph;
+    			i++;
+    		} else {
+    			s = start2;
+    			e = end2;
+    			c = contentTranscript;
+    			j++;
+    		}
+    		
+
+    		if(temp == null) {
+    			temp = new HashMap<String, Object>(); 
+				temp.put("start", s);
+		    	temp.put("end", e);
+		    	temp.put("content", c);
+		    	continue;
+    		}
+
+    		long start = (long) temp.get("start");
+    		long end = (long) temp.get("end");
+    		String content = (String) temp.get("content");
+    		
+    		if(end > s - latency) {// s dan xen hoac long nhau
+				if(end > e + latency) { //2 doan long nhau
+					
+				} else {//2 doan dan xen
+					
+				}
+		    	
+				
+			} else {//k dan xen
+				if(s - latency - end > minSegment) { // nam 2 doan
+					r.add(temp);
+					temp = new HashMap<String, Object>(); 
+					temp.put("start", s);
+			    	temp.put("end", e);
+			    	temp.put("content", c);	
+				} else {//gop 2 phan thanh 1 doan
+					temp.put("end", e);
+			    	temp.put("content", content + " " + c);
+				}
+			}
+    	}
+    	return r;
+	}
+    
+    public List<Integer> indexOf(String o1, String o2) {
+    	List<Integer> r = new ArrayList<Integer>();
+    	Damerau d = new Damerau();
+    	
+		String[] list = o1.split(delimiters);
+		for(int i = 0; i < list.length; ++i) {
+			double distance = d.distance(list[i], o2);
+			if(distance < minDistance) {
+				r.add(i);
+			}
+		}
+		//r.sort((Integer n1, Integer n2)->n1-n2);
+		
+		return r;
+		
+    }
 
 }

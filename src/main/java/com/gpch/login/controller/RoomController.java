@@ -192,14 +192,14 @@ public class RoomController {
             
             return result;
     	}
-    	int roomId = Integer.valueOf((String) payload.get("roomId"));
+    	int roomId = (int) payload.get("roomId");
     	List<Object> members = (List<Object>) payload.get("members");
     	
     	for(int i = 0; i < members.size(); ++i) {
     		Map<String, Object> member = (Map<String, Object>) members.get(i);
     		
     		List<String> roles = (List<String>) member.get("roles");
-    		int usrId = Integer.valueOf((String) member.get("userId"));
+    		int usrId = (int) member.get("userId");
     		roomService.addMemberRoom(roomId, usrId, roles, user.getId());
     	}
     	
