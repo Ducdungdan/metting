@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -155,6 +156,68 @@ public class RoomContentService{
     	List<Map<String, Object>> contents = new ArrayList<Map<String,Object>>();
     	if(roomService.checkInRoom(roomId, user)){
     		List<RoomContent> list = roomContentRepository.findByRoomId(roomId);
+//    		----------------------------------
+    		System.out.println("------------- Chuoi ban dau--------------------");
+    		for (RoomContent roomContent : list) {
+				System.out.println("SpeakerID" + roomContent.getSpeakerId() +", Content: " + roomContent.getContent() +", Time: "+ roomContent.getStart().getTime());
+			}
+    		
+    		System.out.println("------------Chuoi sau khi sap xep ----------------");
+    		ArrayList<RoomContent> lstRoomContents = new ArrayList<>(); // lst sau khi da bo cac doan transcript trung nhau;
+    		Collections.sort(list);
+    		for (RoomContent roomContent : list) {
+				System.out.println("SpeakerID" + roomContent.getSpeakerId() +", Content: " + roomContent.getContent() +", Time: "+ roomContent.getStart().getTime());
+			}
+    		long L = 2; // do tre cua nguoi su dung
+    		long timeMin = 4; // thoi gian it nhat de noi mot cau co nghia
+    		long B = 2; // thoi gian trung binh ngat giua cac cau neu nguoi noi mot doan
+    		long Break1 = timeMin + B + L;
+    		
+    		RoomContent contentChoose = new RoomContent();
+    		contentChoose = list.get(0);
+    	
+    		for(int i=1; i< list.size(); i++) {
+    			RoomContent contentNext = list.get(i);
+    			long distance = (contentNext.getStart().getTime() - contentChoose.getStart().getTime())/1000; // khoang cach giua thoi gian bat dau cua message hien tai va message tiep theo
+    			if(distance < L && contentChoose.getSpeakerId() == contentNext. getSpeakerId()) {
+    				if(contentNext.getContent().length() > contentChoose.getContent().length()) {
+    					contentChoose = contentNext;
+    				}
+    				contentChoose.setStart(new Timestamp(contentChoose.getStart().getTime() + contentNext.getStart().getTime()/2));
+    				contentChoose.setEnd(new Timestamp(contentChoose.getEnd().getTime() + contentNext.getEnd().getTime()/2));
+    			}
+    			else if((distance >= Break1 && contentNext.getStart().getTime() > contentChoose.getEnd().getTime())
+    					|| contentChoose.getSpeakerId() != contentNext.getSpeakerId() || i == (list.size() - 1)) {
+    				RoomContent rContent = new RoomContent();
+    				rContent.setSpeakerId(contentChoose.getSpeakerId());
+    				rContent.setRoomId(contentChoose.getRoomId());
+    				rContent.setContent(contentChoose.getContent());
+    				rContent.setStart(contentChoose.getStart());
+    				rContent.setEnd(contentChoose.getEnd());
+    				lstRoomContents.add(rContent);
+    				contentChoose = contentNext;
+    			}
+//    			if(i == (list.size() - 1)) {
+//    				RoomContent rContent = new RoomContent();
+//    				rContent.setContent(contentChoose.getContent());
+//    				rContent.setStart(contentChoose.getStart());
+//    				rContent.setEnd(contentChoose.getEnd());
+//    				lstRoomContents.add(rContent);
+//    			}
+    		}
+    		
+    		// -- in list sau khi merge
+    		System.out.println("------------------------------ List sau khi merge -----------------------------------------------------");
+    		for (RoomContent item : lstRoomContents) {
+				System.out.println("SpeakerID: "+ item.getSpeakerId() +", Content: " + item.getContent() +" , TimeStart: " + item.getStart() +" , TimeEnd: " + item.getEnd());
+			}
+    		
+    		
+    		
+    		
+    		
+    		
+//    		-------------------------------
     		for(RoomContent roomContent: list) {
     			RoomSpeaker roomSpeaker = roomSpeakerRepository.findById(roomContent.getSpeakerId());
     			
@@ -184,5 +247,32 @@ public class RoomContentService{
     	}
     	return contents;
     }
+    
+    private int editDistance(String s1, String s2) {
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+
+        int[] costs = new int[s2.length() + 1];
+        for (int i = 0; i <= s1.length(); i++) {
+          int lastValue = i;
+          for (int j = 0; j <= s2.length(); j++) {
+            if (i == 0)
+              costs[j] = j;
+            else {
+              if (j > 0) {
+                int newValue = costs[j - 1];
+                if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                  newValue = Math.min(Math.min(newValue, lastValue),
+                      costs[j]) + 1;
+                costs[j - 1] = lastValue;
+                lastValue = newValue;
+              }
+            }
+          }
+          if (i > 0)
+            costs[s2.length()] = lastValue;
+        }
+        return costs[s2.length()];
+      }
 
 }

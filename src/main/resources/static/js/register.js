@@ -159,8 +159,10 @@ login = function(){
 				alert("Đăng nhập thành công");
 				window.location.replace("/default");
 				document.cookie = "authorization="+token;
+				var username = response.data.username;
 				var fullname = response.data.firstName +" " + response.data.lastName;
 				document.cookie = "fullname="+fullname;
+				document.cookie = "username="+username;
 			}else {
 				$("#status_login").text("Tên đăng nhập hoặc mật khẩu không chính xác");
 			}
