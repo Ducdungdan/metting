@@ -35,7 +35,7 @@ public class CRUDUserController {
 	}
 	
 	 @RequestMapping(value = "/api/admin/getall", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-	    public @ResponseBody Map<String, ? extends Object> getRoomJoined(HttpServletRequest request) {
+	    public @ResponseBody Map<String, ? extends Object> getAllUsers(HttpServletRequest request) {
 	        
 	    	Map<String, Object> result = new HashMap<String, Object>();
 	    	User user = (User) request.getAttribute("user");
@@ -46,6 +46,28 @@ public class CRUDUserController {
 		        result.put("code", 0);
 				result.put("message", HttpStatus.OK.name());
 				result.put("data", users);
+	    	}
+	    	
+	        return result;
+	    }
+	 
+	 @RequestMapping(value = "/api/getinformation", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+	    public @ResponseBody Map<String, ? extends Object> getInformation(HttpServletRequest request) {
+	        
+	    	Map<String, Object> result = new HashMap<String, Object>();
+	    	User user = (User) request.getAttribute("user");
+	    	if(user == null) {
+	    		return null;
+	    	}else {
+	    		Map<String,Object> userMap = new HashMap<>();
+	    		userMap.put("id", user.getId());
+	    		userMap.put("firstname", user.getFirstName());
+	    		userMap.put("lastname", user.getLastName());
+	    		userMap.put("username", user.getUsername());
+	    		userMap.put("phone", user.getPhone());
+		        result.put("code", 0);
+				result.put("message", HttpStatus.OK.name());
+				result.put("data", userMap);
 	    	}
 	    	
 	        return result;
