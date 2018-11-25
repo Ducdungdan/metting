@@ -118,7 +118,7 @@ public class LoginController {
           data.put("lastName", user.getLastName());
           data.put("phone", user.getPhone());
           data.put("roles", user.getRoles());
-          data.put("id", user.getId());
+          data.put("userId", user.getId());
           result.put("data", data);
           System.out.println("test getAuthorities::" + user.getRoles().size());
         } else {

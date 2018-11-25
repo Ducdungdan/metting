@@ -622,6 +622,7 @@ public List<Map<String, Object>> getReporters(int userId) {
     private void updateNumberMemberRoom(int roomId) {
     	Room room = roomRepository.findById(roomId);
     	room.setNumber(room.getMemberRooms().size()); 
+    	roomRepository.save(room);
     }
     
     public Set<RoomRole> getRoleRoomByUser(int roomId, int userId) {
