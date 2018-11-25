@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -62,8 +61,8 @@ xmlns:th="http://www.thymeleaf.org">
 						<button id="btn_send" class="btn btn-primary" style="width: 9%; font-size: 20px;" onclick="sendMessage()">
 							<i class="fa fa-upload" aria-hidden="true"></i>
 						</button>
-						<form method="POST" action="/upload" enctype="multipart/form-data">
-							<input type="number"  >
+						<form method="POST"  action="/api/room/upload" enctype="multipart/form-data">
+							<input type="number" id="roomIdUpfile" name="roomId">
 							<input type="file" name="file" /><br/><br/>
 							<input type="submit" value="Submit" />
 						</form>

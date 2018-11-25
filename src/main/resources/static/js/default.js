@@ -14,6 +14,7 @@ $(document).ready(function(){
 		type:'get',
 		success: function(response){
 			var code = response.code;
+			console.log(response);
 			if(code == 0){
 				listRoom = response.data;
 				listRoom.sort(function(a,b){

@@ -4,6 +4,7 @@ $(document).ready(function(){
 	getRoomInfor(roomID);
 	getRoomContent();
 	setPersmisson();
+	$("#roomIdUpfile").val(parseInt(roomID));
 	//--------
 	
 	//-------------

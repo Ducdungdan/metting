@@ -10,6 +10,7 @@ public class ChatMessage {
         CHAT,
         JOIN,
         NOTIFY,
+        ADD_FILE,
         LEAVE
     }
 
