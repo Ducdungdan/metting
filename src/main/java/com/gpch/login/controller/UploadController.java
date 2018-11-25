@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/api/room")
 public class UploadController {
 
 
