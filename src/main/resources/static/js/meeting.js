@@ -4,7 +4,8 @@ $(document).ready(function(){
 	getRoomInfor(roomID);
 	getRoomContent();
 	setPersmisson();
-	$("#roomIdUpfile").val(parseInt(roomID));
+	var url = "/api/room/upload/" + roomID;
+	$("#formupfile").attr("action",url);
 	//--------
 	
 	//-------------

@@ -53,15 +53,14 @@ public class UploadController {
     public @ResponseBody Map<String, ? extends Object> singleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes, @PathVariable int roomId, HttpServletRequest request) {
     	Map<String, Object> result = new HashMap<String, Object>();
-//    	User user = (User) request.getAttribute("user");
-//    	int roomId = Integer.valueOf(roomIdS);
+    	User user = (User) request.getAttribute("user");
         if (file.isEmpty()) {
         	result.put("code", 1);
     		result.put("message", "No file");
     		return result;
         }
         String rootPath = System.getProperty("user.dir");
-        UPLOADED_FOLDER = rootPath + "/src/main/resources/upload/room_/";
+        UPLOADED_FOLDER = rootPath + "/src/main/resources/upload/room_"+roomId+"/";
         File dir = new File(UPLOADED_FOLDER);
         if(!dir.exists()){
             dir.mkdir();
@@ -73,10 +72,10 @@ public class UploadController {
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
 
-//            FileSave newFile = fileService.saveFileSaveById(user.getId(), roomId, path.toString(), file.getOriginalFilename());
+            FileSave newFile = fileService.saveFileSaveById(user.getId(), roomId, path.toString(), file.getOriginalFilename());
             
             result.put("code", 0);
-//            result.put("data", newFile);
+            result.put("data", newFile);
     		result.put("message", "OK");
             
             return result;
