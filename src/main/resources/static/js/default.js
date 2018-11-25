@@ -43,7 +43,7 @@ getCookiebyName = function(name){
 
 
 loadData = function(){
-	$('#listRoom').children().remove().end(); 
+	$('#listRoom').children().remove().end();  
 	// bind data to listmeetingroom
 	for (var i = 0; i < listRoom.length; i++) {
 		var id = listRoom[i].id;
