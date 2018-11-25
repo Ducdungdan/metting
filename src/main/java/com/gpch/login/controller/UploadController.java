@@ -26,12 +26,14 @@ public class UploadController {
     MergeFileExcelsUtil mergeFileExcelsUtil;
     @Autowired
     PdfGenerator pdfGenerator;
+    @Autowired
+    ReadFileExcelUtil readFileExcelUtil;
     //Save the uploaded file to this folder
     private static String UPLOADED_FOLDER = "";
 
     @GetMapping("/upload")
     public String index() {
-        System.out.println(mergeFileExcelsUtil.merge(1).toString());
+        mergeFileExcelsUtil.merge(1);
         return "upload";
     }
 
