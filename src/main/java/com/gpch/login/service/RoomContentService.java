@@ -169,7 +169,7 @@ public class RoomContentService{
     			reporter.put("userId", roomContent.getUser().getId());
     			reporter.put("firstName", roomContent.getUser().getFirstName());
     			reporter.put("lastName", roomContent.getUser().getLastName());
-    			reporter.put("userName", roomContent.getUser().getUsername());
+    			reporter.put("username", roomContent.getUser().getUsername());
     			
     			speaker.put("speakerId", roomSpeaker.getId());
     			speaker.put("firstName", roomSpeaker.getFirstName());
@@ -197,7 +197,7 @@ public class RoomContentService{
     			reporter.put("userId", u.getId());
     			reporter.put("firstName", u.getFirstName());
     			reporter.put("lastName", u.getLastName());
-    			reporter.put("userName", u.getUsername());
+    			reporter.put("username", u.getUsername());
     			
     			rc.put("speaker", null);
     			rc.put("content", filesave.getName());

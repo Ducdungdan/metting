@@ -115,8 +115,8 @@ public class PdfGenerator {
             Vector<String> v = datas.get(i);
             table.addCell(v.get(0));
             table.addCell(v.get(1));
-            table.addCell(v.get(2));
             table.addCell(v.get(3));
+            table.addCell(v.get(2));
         }
         PdfWriter.getInstance(document, new FileOutputStream(path + "report_rom_" + roomId + ".pdf"));
         document.open();
