@@ -400,6 +400,57 @@ public class RoomController {
     	
     }
     
+    @RequestMapping(value = "/test-merge-stenograph-transcript", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> testMergeStenographTranscript(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	List<Map<String, Object>> listStenograph = new ArrayList<Map<String,Object>>();
+    	
+    	Map<String, Object> stenograph = new HashMap<String, Object>();
+    	
+    	stenograph = new HashMap<String, Object>();
+    	stenograph.put("start", 100L);
+    	stenograph.put("end", 500L);
+    	stenograph.put("content", "Anh chua tung noi se yeu em suot doi");
+    	listStenograph.add(stenograph);
+    	
+    	stenograph = new HashMap<String, Object>();
+    	stenograph.put("start", 520L);
+    	stenograph.put("end", 900L);
+    	stenograph.put("content", "Anh chua tung nghi minh se lam duoc dieu do");
+    	listStenograph.add(stenograph);
+    	
+    	stenograph = new HashMap<String, Object>();
+    	stenograph.put("start", 1400L);
+    	stenograph.put("end", 2000L);
+    	stenograph.put("content", "Anh yeu em chi vay thoi");
+    	listStenograph.add(stenograph);
+    	
+    	List<Map<String, Object>> listTranscript = new ArrayList<Map<String,Object>>();
+    	Map<String, Object> transcript = new HashMap<String, Object>();
+    	
+    	transcript = new HashMap<String, Object>();
+    	transcript.put("start", 0L);
+    	transcript.put("end", 900L);
+    	transcript.put("content", "Anh chua tung noi se yeu em suot doi. Anh chua tung nghi minh se lam duoc dieu do");
+    	listTranscript.add(transcript);
+    	
+    	transcript = new HashMap<String, Object>();
+    	transcript.put("start", 1450L);
+    	transcript.put("end", 2000L);
+    	transcript.put("content", "Anh yeu em chi vay thoi");
+    	listTranscript.add(transcript);
+    	
+    	List<Map<String, Object>> list = roomService.mergeStenographTranscript(listStenograph, listTranscript);
+    	
+    	result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", list);
+        return result;
+    	
+    }
+    
     
 
 

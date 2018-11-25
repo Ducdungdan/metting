@@ -8,8 +8,10 @@ import java.util.Set;
 
 import com.gpch.login.model.ChatMessage;
 import com.gpch.login.model.ChatMessage.MessageType;
+import com.gpch.login.model.FileSave;
 import com.gpch.login.model.RoomUser;
 import com.gpch.login.model.User;
+import com.gpch.login.service.FileService;
 import com.gpch.login.service.JwtService;
 import com.gpch.login.service.RoomContentService;
 import com.gpch.login.service.RoomService;
@@ -47,6 +49,8 @@ public class ChatController {
 	@Autowired
 	private SimpMessagingTemplate template;
 
+	@Autowired
+    FileService fileService;
 	
     @MessageMapping("/chat.sendMessage")
 //    @SendTo("/topic/hello")
@@ -74,6 +78,40 @@ public class ChatController {
     	
     	return chatMessage;
     }
+    
+    @MessageMapping("/chat.sendFile")
+//  @SendTo("/topic/hello")
+  public ChatMessage sendFile(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+  	User user = (User) headerAccessor.getSessionAttributes().get("user");
+  	
+  	if(user != null) {
+  		Map<String, Object> data = chatMessage.getData();
+  		
+  		int roomId = (int) data.get("roomId");
+  		if(roomService.checkInRoom(roomId, user)) {
+  			if(data.containsKey("fileSaveId")) {
+  				int fileSaveId = (int) data.get("fileSaveId");
+  				Map<String, Object> dataMessage = new HashMap<String, Object>();
+  				
+  				User u = userService.findUserByUsername(user.getUsername());
+  				
+  				FileSave newFile = fileService.getFileSaveById(fileSaveId);
+  				
+  				
+  				dataMessage.put("newFile", newFile);
+  				dataMessage.put("user", u);
+  				
+  				ChatMessage message = new ChatMessage();
+	  	    		  message.setType(MessageType.ADD_FILE);
+	  	    		message.setData(dataMessage);
+  				this.template.convertAndSend("/topic/"+roomId, message);
+  			}
+  			
+  		}
+  	}
+  	
+  	return chatMessage;
+  }
 
     @MessageMapping("/chat.addUser")
 //    @SendTo("/topic/hello")

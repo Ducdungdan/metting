@@ -23,29 +23,29 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "room_speaker")
-public class RoomSpeaker implements Serializable{
+@Table(name = "file_content")
+public class FileContent implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "room_speaker_id")
+    @Column(name = "file_content_id")
     private int id;
     
-    @Column(name = "first_name")
-    @Length(min = 2, message = "*Your first name must have at least 10 characters")
-    @NotEmpty(message = "*Please provide first name speaker")
-    private String firstName;
+    @Column(name = "speaker_id")
+    private int speakerId;
     
-    @Column(name = "last_name")
-    @Length(min = 2, message = "*Your last name must have at least 10 characters")
-    @NotEmpty(message = "*Please provide last name speaker")
-    private String lastName;
+    @Column(name = "content")
+    @NotEmpty(message = "*Please provide content message")
+    private String content;
+    
+    @Column(name = "start")
+    private Timestamp start;
+    
+    @Column(name = "end")
+    private Timestamp end;
     
     @Column(name = "room_id")
     private int roomId;
-    
-    @Column(name = "frequency")
-    private int frequency;
     
     @Column(name = "created_by")
     private int createdBy;
@@ -67,20 +67,14 @@ public class RoomSpeaker implements Serializable{
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	
+
+	public int getSpeakerId() {
+		return speakerId;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setSpeakerId(int speakerId) {
+		this.speakerId = speakerId;
 	}
 
 	public int getRoomId() {
@@ -89,6 +83,30 @@ public class RoomSpeaker implements Serializable{
 
 	public void setRoomId(int roomId) {
 		this.roomId = roomId;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Timestamp getStart() {
+		return start;
+	}
+
+	public void setStart(Timestamp start) {
+		this.start = start;
+	}
+
+	public Timestamp getEnd() {
+		return end;
+	}
+
+	public void setEnd(Timestamp end) {
+		this.end = end;
 	}
 
 	public int getCreatedBy() {
@@ -107,14 +125,6 @@ public class RoomSpeaker implements Serializable{
 		this.createdDTG = createdDTG;
 	}
 
-	public int getFrequency() {
-		return frequency;
-	}
-
-	public void setFrequency(int frequency) {
-		this.frequency = frequency;
-	}
-
 	public int getUpdatedBy() {
 		return updatedBy;
 	}
@@ -130,7 +140,5 @@ public class RoomSpeaker implements Serializable{
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
-
-    
     
 }

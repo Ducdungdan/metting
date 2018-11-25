@@ -598,15 +598,15 @@ public List<Map<String, Object>> getReporters(int userId) {
 		return null;
 	}
     
-    private final int latency = 20; //0.2s
-    private final int minDistance = 10;
-    private final int minSegment = 1500; //tg ngat doan 15s
+    private final int latency = 100; //2s
+    private final int minDistance = 1;
+    private final int minSegment = 200; //tg ngat doan 2s
     private final String delimiters = "\\s+|,\\s*|\\.\\s*";
     
     public List<Map<String, Object>> mergeStenographTranscript(List<Map<String, Object>> listStenograph, List<Map<String, Object>> listTranscript) {
     	List<Map<String, Object>> r = new ArrayList<Map<String,Object>>();
-    	listStenograph.sort((Map<String, Object> o1, Map<String, Object> o2)->(int)o1.get("start")-(int)o2.get("start"));
-    	listTranscript.sort((Map<String, Object> o1, Map<String, Object> o2)->(int)o1.get("start")-(int)o2.get("start"));
+    	listStenograph.sort((Map<String, Object> o1, Map<String, Object> o2)->(int) (long) o1.get("start")-(int) (long)o2.get("start"));
+    	listTranscript.sort((Map<String, Object> o1, Map<String, Object> o2)->(int) (long)o1.get("start")-(int) (long)o2.get("start"));
     	
     	int i = 0, j = 0;
     	Map<String, Object> temp = null;
@@ -619,8 +619,8 @@ public List<Map<String, Object>> getReporters(int userId) {
     		
     		long start1 = (long) stenograph.get("start");
     		long end1 = (long) stenograph.get("end");
-    		long start2 = (long) stenograph.get("start");
-    		long end2 = (long) stenograph.get("end");
+    		long start2 = (long) transcript.get("start");
+    		long end2 = (long) transcript.get("end");
     		
     		long s = 0;
     		long e = 0;
@@ -654,14 +654,215 @@ public List<Map<String, Object>> getReporters(int userId) {
     		String content = (String) temp.get("content");
     		
     		if(end > s - latency) {// s dan xen hoac long nhau
-				if(end > e + latency) { //2 doan long nhau
+    			String[] listTempContent = content.split(delimiters);
+    			String[] listFirstContent = c.split(delimiters);
+    			List<Integer> ends = new ArrayList<Integer>();
+    			List<Integer> starts = new ArrayList<Integer>();
+				if(end > e - latency) { //2 doan long nhau
+					int indexE = -1, indexS = -1;
+					for(int k = 0; k < listTempContent.length; ++k ) {
+						List<Integer> check = new ArrayList<Integer>();
+						
+						for(int x = 0; x < listFirstContent.length; ++x) {
+							if(listFirstContent[x].toLowerCase().equals(listTempContent[k].toLowerCase())) {
+								check.add(x);
+								break;
+							}
+						}
+						
+						if(check.size() > 0) {
+							starts = check;
+							indexS = k;
+							break;
+						}
+						
+						starts = indexOf(c, listTempContent[k]);
+						if(starts.size() > 0) {
+							indexS = k;
+							break;
+						}
+					}
 					
+					for(int k = listTempContent.length - 1; k >= 0; --k ) {
+						List<Integer> check = new ArrayList<Integer>();
+						for(int x = 0; x < listFirstContent.length; ++x) {
+							if(listFirstContent[x].toLowerCase().equals(listTempContent[k].toLowerCase())) {
+								check.add(x);
+								indexS = k;
+								break;
+							}
+						}
+						
+						if(check.size() > 0) {
+							ends = check;
+							indexE = k;
+							break;
+						}
+						
+						
+						ends = indexOf(c, listTempContent[k]);
+						if(ends.size() > 0) {
+							indexE = k;
+							break;
+						}
+					}
+					
+					if(starts.size() == 0 || indexE == -1) {
+						temp.put("end", e);
+				    	temp.put("content", content + " " + c);
+					} else {
+						double minD = 999;
+						int indexSs = -1, indexEe = -1;
+						Damerau d = new Damerau();
+						String cc1 = "";
+						
+						for(int k = indexS; k <= indexE; ++k) {
+							cc1 += listTempContent[k] + " ";
+						}
+						
+						for(int k = 0; k < starts.size(); ++k) {
+							for(int l = ends.size() - 1; l >= 0; --l) {
+								String cc2 = "";
+								for(Integer h = starts.get(k); h <= ends.get(l); ++h) {
+									cc2 += listFirstContent[h] + " ";
+								}
+								double dv = d.distance(cc2, cc1);
+								if(dv < minD&& dv < 20) {
+									minD = dv;
+									indexSs = starts.get(k);
+									indexEe = ends.get(l);
+								}
+							}
+						}
+						
+						if(indexSs==-1||indexEe==-1) {
+					    	temp.put("content", content + " " + c);
+						} else {
+							String newContent = "";
+							
+							int indexA = content.indexOf(listTempContent[indexSs]);
+							int indexB = content.lastIndexOf(listTempContent[indexEe]);
+							
+							newContent += content.substring(0, indexA);
+							
+							newContent += " " + c + " ";
+							
+							newContent += content.substring(indexB);
+							
+					    	temp.put("content", newContent);
+							
+						}
+					}
 				} else {//2 doan dan xen
+					int indexS = -1;
+					int indexE = -1;
 					
+					if(end > e - latency) { //2 doan long nhau
+						for(int k = 0; k < listFirstContent.length; ++k ) {
+							List<Integer> check = new ArrayList<Integer>();
+							
+							for(int x = 0; x < listTempContent.length; ++x) {
+								if(listFirstContent[k].toLowerCase().equals(listTempContent[x].toLowerCase())) {
+									check.add(x);
+									break;
+								}
+							}
+							
+							if(check.size() > 0) {
+								starts = check;
+								indexS = k;
+								break;
+							}
+							
+							starts = indexOf(content, listFirstContent[k]);
+							if(starts.size() > 0) {
+								indexS = k;
+								break;
+							}
+						}
+					
+					
+					for(int k = 0; k < listFirstContent.length; ++k ) {
+						starts = indexOf(content, listFirstContent[k]);
+						if(starts.size() > 0) {
+							indexS = k;
+							break;
+						}
+					}
+					
+					for(int k = listTempContent.length - 1; k >= 0; --k ) {
+						List<Integer> check = new ArrayList<Integer>();
+						for(int x = 0; x < listFirstContent.length; ++x) {
+							if(listFirstContent[x].toLowerCase().equals(listTempContent[k].toLowerCase())) {
+								check.add(x);
+								indexS = k;
+								break;
+							}
+						}
+						
+						if(check.size() > 0) {
+							ends = check;
+							indexE = k;
+							break;
+						}
+						
+						
+						ends = indexOf(c, listTempContent[k]);
+						if(ends.size() > 0) {
+							indexE = k;
+							break;
+						}
+					}
+					
+					if(indexS == -1 || indexE == -1) {
+						temp.put("end", e);
+				    	temp.put("content", content + " " + c);
+					} else {
+						double minD = 999;
+						int indexSs = -1, indexEe = -1;
+						Damerau d = new Damerau();
+						
+						for(int k = 0; k < starts.size(); ++k) {
+							for(int l = ends.size() - 1; l >= 0; --l) {
+								if(starts.get(k) < ends.get(l)) {
+									String cc1 = "", cc2 = "";
+									
+									for(Integer h = starts.get(k); h < indexE; ++h) {
+										cc1 += listTempContent[h] + " ";
+									}
+									
+									for(Integer h = indexS; h < ends.get(l); ++h) {
+										cc2 += listFirstContent[h] + " ";
+									}
+									
+									double dv = d.distance(cc1, cc2);
+									if(dv < minD&& dv < 20) {
+										minD = dv;
+										indexSs = starts.get(k);
+										indexEe = ends.get(l);
+									}
+								}
+							}
+						}
+						
+						if(indexSs==-1||indexEe==-1) {
+					    	temp.put("content", content + " " + c);
+						} else {
+							String newContent = "";
+							
+							int indexA = content.indexOf(listTempContent[indexSs]);
+							int indexB = c.lastIndexOf(listFirstContent[indexEe]);
+							
+							newContent = content + " " + c.substring(indexB);
+							
+					    	temp.put("content", newContent);
+					    	temp.put("end", e);
+							
+						}
+					}
 				}
-		    	
-				
-			} else {//k dan xen
+			}
+    		}else {//k dan xen
 				if(s - latency - end > minSegment) { // nam 2 doan
 					r.add(temp);
 					temp = new HashMap<String, Object>(); 
@@ -674,6 +875,20 @@ public List<Map<String, Object>> getReporters(int userId) {
 				}
 			}
     	}
+    	
+    	r.add(temp);
+    	if(i < listStenograph.size()) {
+    		for(int k = i; k < listStenograph.size(); ++k) {
+    			r.add(listStenograph.get(k));
+    		}
+    	}
+    	
+    	if(j < listTranscript.size()) {
+    		for(int k = j; k < listTranscript.size(); ++k) {
+    			r.add(listTranscript.get(k));
+    		}
+    	}
+    	
     	return r;
 	}
     
