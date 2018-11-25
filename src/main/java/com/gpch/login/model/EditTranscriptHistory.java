@@ -28,13 +28,13 @@ public class EditTranscriptHistory implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "edit_transcript_history")
+    @Column(name = "edit_transcript_history_id")
     private int id;
     
     @Column(name = "speaker_id")
     private int speakerId;
     
-    @Column(name = "index")
+    @Column(name = "seq")
     private int index;
     
     @Column(name = "transcript_id")

@@ -48,11 +48,9 @@ public class UploadController {
     }
 
     
-    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public Map<String, ? extends Object> singleFileUpload(@RequestParam("file") MultipartFile file,
-    								@RequestParam("roomId") int roomId,
-    								HttpServletRequest request,
-                                   RedirectAttributes redirectAttributes) {
+    @PostMapping("/upload/{roomId}") // //new annotation since 4.3
+    public @ResponseBody Map<String, ? extends Object> singleFileUpload(@RequestParam("file") MultipartFile file,
+                                   RedirectAttributes redirectAttributes, @PathVariable int roomId, HttpServletRequest request) {
     	Map<String, Object> result = new HashMap<String, Object>();
     	User user = (User) request.getAttribute("user");
         if (file.isEmpty()) {

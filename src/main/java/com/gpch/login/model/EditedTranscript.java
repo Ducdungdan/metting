@@ -34,7 +34,7 @@ public class EditedTranscript implements Serializable{
     @Column(name = "speaker_id")
     private int speakerId;
     
-    @Column(name = "index")
+    @Column(name = "seq")
     private int index;
     
     @Column(name = "content")
