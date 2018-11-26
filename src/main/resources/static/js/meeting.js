@@ -287,7 +287,7 @@ addListUser = function(){
 }
 
 addListReporter = function(){
-	var roomID = GetURLParameter("roomID");
+	var roomID = parseInt(GetURLParameter("roomID"));
 	var objectReq = {roomId: roomID, members:lstReporters};
 	$.ajax({
 		url:'/api/room/add-members',
@@ -547,6 +547,12 @@ lstUserIDRemoved= [];
  				var usrname_login = getCookiebyName("username");
  				if(own != usrname_login){
  					$("#btn_finish_room").css("display","none");
+ 				}else{
+ 					var lstRolesName = [];
+ 					for (var j = 0; j < roleRooms.length; j++) {
+ 						lstRolesName.push(roleRooms[j].value);
+ 					}
+ 					document.cookie = "roles="+lstRolesName;
  				}
 
  				liSpeakerClick();
@@ -648,6 +654,28 @@ showStartTime = function(){
 function sendMessage() {
 	$("#btn_start").css("display","inline");
 	$("#message").attr("disabled", true)
+	var speakerID = parseInt($("#hidSpeakerID").val());
+	var roomID = parseInt(GetURLParameter("roomID"));
+	var content = $("#message").val().trim();
+	$("#message").val("");
+	if(content && stompClient) {
+		var chatMessage = {
+			data: {
+				roomId: roomID,
+				speakerId: speakerID,
+				content: content,
+				startTime: startTimeSpeaker,
+				endTime: endTimeSpeaker
+			},
+			type: 'CHAT'
+		};
+
+		stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+	}
+}
+
+function sendFile() {
+	
 	var speakerID = parseInt($("#hidSpeakerID").val());
 	var roomID = parseInt(GetURLParameter("roomID"));
 	var content = $("#message").val().trim();

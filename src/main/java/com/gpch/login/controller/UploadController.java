@@ -40,12 +40,7 @@ public class UploadController {
     
     //Save the uploaded file to this folder
     private static String UPLOADED_FOLDER = "";
-//
-//    @GetMapping("/upload")
-//    public String index() {
-//        System.out.println(mergeFileExcelsUtil.merge(1).toString());
-//        return "upload";
-//    }
+
 
     
 
