@@ -47,6 +47,15 @@ public class RoomTranscript implements Serializable{
     @Column(name = "room_id")
     private int roomId;
     
+    @Column(name = "seq")
+    private int index;
+    
+    @Column(name = "edited")
+    private int edited;
+    
+    @Column(name = "editing_by_user_id")
+    private int editingByUserId;
+    
     @Column(name = "created_by")
     private int createdBy;
     
@@ -140,5 +149,29 @@ public class RoomTranscript implements Serializable{
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
-	
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public int getEdited() {
+		return edited;
+	}
+
+	public void setEdited(int edited) {
+		this.edited = edited;
+	}
+
+	public int getEditingByUserId() {
+		return editingByUserId;
+	}
+
+	public void setEditingByUserId(int editingByUserId) {
+		this.editingByUserId = editingByUserId;
+	}
+
 }

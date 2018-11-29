@@ -71,6 +71,8 @@ public class ChatController {
 	  	    		  message.setType(MessageType.CHAT);
 	  	    		message.setData(dataMessage);
     				this.template.convertAndSend("/topic/"+roomId, message);
+    				roomService.updateRoomContentMerge(roomId, user.getId());
+    				roomService.updateRoomTranscript(roomId, user.getId());
     			}
     			
     		}
@@ -113,6 +115,8 @@ public class ChatController {
 	  	    		  message.setType(MessageType.ADD_FILE);
 	  	    		message.setData(dataMessage);
   				this.template.convertAndSend("/topic/"+roomId, message);
+  				roomService.updateRoomFileContent(roomId, user.getId());
+				roomService.updateRoomTranscript(roomId, user.getId());
   			}
   			
   		}

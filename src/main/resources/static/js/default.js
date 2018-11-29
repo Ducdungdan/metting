@@ -17,6 +17,9 @@ $(document).ready(function(){
 			console.log(response);
 			if(code == 0){
 				listRoom = response.data;
+				listRoom.sort(function(a,b){
+					return - (a["active"] - b["active"]); 
+				});
 				console.log("Success");
 				loadData();
 			}else {
@@ -41,6 +44,7 @@ getCookiebyName = function(name){
 
 
 loadData = function(){
+	$('#listRoom').children().remove().end();  
 	// bind data to listmeetingroom
 	for (var i = 0; i < listRoom.length; i++) {
 		var id = listRoom[i].id;
@@ -58,7 +62,7 @@ loadData = function(){
 }
 
 getTimeShow = function(time){
- 	
+
 	var day = addZero(time.getDate());
 	var month = addZero(time.getMonth()+1);
 	var year = addZero(time.getFullYear());
@@ -66,9 +70,9 @@ getTimeShow = function(time){
 	var m = addZero(time.getMinutes());
 	var s = addZero(time.getSeconds());
 	return day + ". " + month + ". " + year + " (" + h + ":" + m + ":" + s +")";
- }
+}
 
- function addZero(i) {
+function addZero(i) {
 	if (i < 10) {
 		i = "0" + i;
 	}
@@ -88,6 +92,10 @@ searchRoom= function(){
 addMettingRoom = function(idroom, numberOfUser, time, name, roles, active){
 
 	var roomElement = document.createElement('li');
+	if (active == 1) {
+		roomElement.style['background-color'] = 'cornflowerblue';
+		roomElement.style['color'] = 'white';
+	}
 	roomElement.setAttribute("onclick","navigateToDetail("+ active+"," +idroom+","+roles+")");
 	var idMeetingRoomLi = "li_mr_" + idroom;
 	roomElement.setAttribute("id",idMeetingRoomLi);
@@ -181,12 +189,13 @@ joinMeeting = function(){
 			dataType: 'json',
 			data: JSON.stringify(objectReq),
 			success: function(response){
-
+				var code = response.code;
 				if(code == 0){
 					console.log("Success");
-					var roomid = response.data.id;
-					var url = "meeting?roomID="+ roomid;
+					var roomID = response.data.id;
+					var url = "meeting?roomID="+roomID;
 					window.location.replace(url);
+					
 				}else {
 					console.log("Faild");
 				}

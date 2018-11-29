@@ -86,7 +86,8 @@ public class RoomContentService{
 		for(RoomRole roleBy: rolesBy) {
 			if(roleBy.getName().equals(RoomRoleConstant.WRITE)) {
 				RoomContent roomContent = new RoomContent();
-				RoomContentReport roomContentReport = new RoomContentReport(); 
+				
+				//RoomContentReport roomContentReport = new RoomContentReport(); 
 		    	
 				roomContent.setContent(content);
 				roomContent.setCreatedDTG(new Timestamp(new Date().getTime()));
@@ -100,17 +101,17 @@ public class RoomContentService{
 		    	
 				roomContent = roomContentRepository.save(roomContent);
 				
-				roomContentReport.setContent(content);
-				roomContentReport.setCreatedDTG(new Timestamp(new Date().getTime()));
-				roomContentReport.setEnd(new Timestamp(endTime));
-				roomContentReport.setStart(new Timestamp(startTime));
-				roomContentReport.setRoomId(room.getId());
-				roomContentReport.setSpeakerId(speakerId);
-				roomContentReport.setUser(user);
-				roomContentReport.setUpdatedBy(user.getId());
-				roomContentReport.setUpdatedDTG(new Timestamp(new Date().getTime()));
-		    	
-				roomContentReport = roomContentReportRepository.save(roomContentReport);
+//				roomContentReport.setContent(content);
+//				roomContentReport.setCreatedDTG(new Timestamp(new Date().getTime()));
+//				roomContentReport.setEnd(new Timestamp(endTime));
+//				roomContentReport.setStart(new Timestamp(startTime));
+//				roomContentReport.setRoomId(room.getId());
+//				roomContentReport.setSpeakerId(speakerId);
+//				roomContentReport.setUser(user);
+//				roomContentReport.setUpdatedBy(user.getId());
+//				roomContentReport.setUpdatedDTG(new Timestamp(new Date().getTime()));
+//		    	
+//				roomContentReport = roomContentReportRepository.save(roomContentReport);
 				
 				
 				return getRoomContent(roomContent.getId());
