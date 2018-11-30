@@ -24,7 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "file_content")
-public class FileContent implements Serializable{
+public class FileContent implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,22 +67,12 @@ public class FileContent implements Serializable{
 		this.id = id;
 	}
 
-	
-
 	public int getSpeakerId() {
 		return speakerId;
 	}
 
 	public void setSpeakerId(int speakerId) {
 		this.speakerId = speakerId;
-	}
-
-	public int getRoomId() {
-		return roomId;
-	}
-
-	public void setRoomId(int roomId) {
-		this.roomId = roomId;
 	}
 
 	public String getContent() {
@@ -107,6 +97,14 @@ public class FileContent implements Serializable{
 
 	public void setEnd(Timestamp end) {
 		this.end = end;
+	}
+
+	public int getRoomId() {
+		return roomId;
+	}
+
+	public void setRoomId(int roomId) {
+		this.roomId = roomId;
 	}
 
 	public int getCreatedBy() {
@@ -140,5 +138,5 @@ public class FileContent implements Serializable{
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
-    
+
 }

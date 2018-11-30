@@ -281,6 +281,7 @@ getRoomContent = function(){
 			var code = response.code;
 			if(code == 0){
 				var listContent = response.data;
+				console.log(listContent);
 				for(var i = 0; i< listContent.length; i++){
 					var content = listContent[i];
 					var message = content.content;
@@ -290,7 +291,7 @@ getRoomContent = function(){
 					var endtime = getTimeShow(new Date(content.endTime));
 					var rpFirstName = content.reporter.firstName;
 					var rpLastName = content.reporter.lastName;
-					var rpUserName = content.reporter.userName;
+					var rpUserName = content.reporter.username;
 					reciveMessage(message,firstname,lastname,starttime,endtime,rpFirstName,rpLastName,rpUserName);
 				}
 

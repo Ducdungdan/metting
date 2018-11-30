@@ -34,9 +34,6 @@ public class EditedTranscript implements Serializable{
     @Column(name = "speaker_id")
     private int speakerId;
     
-    @Column(name = "seq")
-    private int index;
-    
     @Column(name = "content")
     @NotEmpty(message = "*Please provide content message")
     private String content;
@@ -142,14 +139,6 @@ public class EditedTranscript implements Serializable{
 
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
-	}
-
-	public int getIndex() {
-		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
 	}
 	
 }

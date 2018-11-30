@@ -23,16 +23,16 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "room_content_merge")
-public class RoomContentMerge implements Serializable {
+@Table(name = "file_content_merge")
+public class FileContentMerge implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "room_content_merge_id")
+    @Column(name = "file_content_merge_id")
     private int id;
     
-    @Column(name = "speaker_id")
-    private int speakerId;
+    @Column(name = "frequency")
+    private int frequency;
     
     @Column(name = "content")
     @NotEmpty(message = "*Please provide content message")
@@ -67,12 +67,12 @@ public class RoomContentMerge implements Serializable {
 		this.id = id;
 	}
 
-	public int getSpeakerId() {
-		return speakerId;
+	public int getRoomId() {
+		return roomId;
 	}
 
-	public void setSpeakerId(int speakerId) {
-		this.speakerId = speakerId;
+	public void setRoomId(int roomId) {
+		this.roomId = roomId;
 	}
 
 	public String getContent() {
@@ -97,14 +97,6 @@ public class RoomContentMerge implements Serializable {
 
 	public void setEnd(Timestamp end) {
 		this.end = end;
-	}
-
-	public int getRoomId() {
-		return roomId;
-	}
-
-	public void setRoomId(int roomId) {
-		this.roomId = roomId;
 	}
 
 	public int getCreatedBy() {
@@ -138,5 +130,16 @@ public class RoomContentMerge implements Serializable {
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
+
+	public int getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(int frequency) {
+		this.frequency = frequency;
+	}
+	
+	
     
+	
 }

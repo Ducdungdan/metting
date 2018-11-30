@@ -71,6 +71,8 @@ public class ChatController {
 	  	    		  message.setType(MessageType.CHAT);
 	  	    		message.setData(dataMessage);
     				this.template.convertAndSend("/topic/"+roomId, message);
+    				roomService.updateRoomContentMerge(roomId, user.getId());
+    				roomService.updateRoomTranscript(roomId, user.getId());
     			}
     			
     		}
@@ -92,19 +94,29 @@ public class ChatController {
   			if(data.containsKey("fileSaveId")) {
   				int fileSaveId = (int) data.get("fileSaveId");
   				Map<String, Object> dataMessage = new HashMap<String, Object>();
-  				
+  				Map<String, Object> newFile1 = new HashMap<String, Object>();
+  				Map<String, Object> user1 = new HashMap<String, Object>();
   				User u = userService.findUserByUsername(user.getUsername());
   				
   				FileSave newFile = fileService.getFileSaveById(fileSaveId);
+  				newFile1.put("id", newFile.getId());
+  				newFile1.put("name", newFile.getName());
+  				newFile1.put("CreatedDTG", newFile.getCreatedDTG());
   				
+  				user1.put("userId", u.getId());
+  				user1.put("firstName", u.getFirstName());
+  				user1.put("lastName", u.getLastName());
+  				user1.put("username", u.getUsername());
   				
-  				dataMessage.put("newFile", newFile);
-  				dataMessage.put("user", u);
+  				dataMessage.put("newFile", newFile1);
+  				dataMessage.put("user", user1);
   				
   				ChatMessage message = new ChatMessage();
 	  	    		  message.setType(MessageType.ADD_FILE);
 	  	    		message.setData(dataMessage);
   				this.template.convertAndSend("/topic/"+roomId, message);
+  				roomService.updateRoomFileContent(roomId, user.getId());
+				roomService.updateRoomTranscript(roomId, user.getId());
   			}
   			
   		}

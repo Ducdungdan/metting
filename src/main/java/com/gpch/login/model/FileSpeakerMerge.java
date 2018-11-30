@@ -23,26 +23,19 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "room_content_merge")
-public class RoomContentMerge implements Serializable {
+@Table(name = "file_speaker_merge")
+public class FileSpeakerMerge implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "room_content_merge_id")
+    @Column(name = "file_speaker_merge_id")
     private int id;
     
-    @Column(name = "speaker_id")
-    private int speakerId;
+    @Column(name = "first_name")
+    private String firstName;
     
-    @Column(name = "content")
-    @NotEmpty(message = "*Please provide content message")
-    private String content;
-    
-    @Column(name = "start")
-    private Timestamp start;
-    
-    @Column(name = "end")
-    private Timestamp end;
+    @Column(name = "last_name")
+    private String lastName;
     
     @Column(name = "room_id")
     private int roomId;
@@ -67,36 +60,20 @@ public class RoomContentMerge implements Serializable {
 		this.id = id;
 	}
 
-	public int getSpeakerId() {
-		return speakerId;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setSpeakerId(int speakerId) {
-		this.speakerId = speakerId;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getContent() {
-		return content;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public Timestamp getStart() {
-		return start;
-	}
-
-	public void setStart(Timestamp start) {
-		this.start = start;
-	}
-
-	public Timestamp getEnd() {
-		return end;
-	}
-
-	public void setEnd(Timestamp end) {
-		this.end = end;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public int getRoomId() {
@@ -138,5 +115,5 @@ public class RoomContentMerge implements Serializable {
 	public void setUpdatedDTG(Timestamp updatedDTG) {
 		this.updatedDTG = updatedDTG;
 	}
-    
+
 }
