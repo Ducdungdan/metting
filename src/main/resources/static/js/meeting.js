@@ -6,15 +6,38 @@ $(document).ready(function(){
 	setPersmisson();
 	var url = "/api/room/upload/" + roomID;
 	$("#formupfile").attr("action",url);
-	//--------
-	
-	//-------------
+
+// uploadfile -------------
+
+$("#formupfile").submit(function(evt){	 
+	evt.preventDefault();
+	var formData = new FormData($(this)[0]);
+	$.ajax({
+		url: url,
+		type: 'POST',
+		data: formData,
+		async: false,
+		cache: false,
+		contentType: false,
+		enctype: 'multipart/form-data',
+		processData: false,
+		success: function (response) {
+			console.log(response); 
+			$('#popUploadFile').modal('hide');
+		}
+	});
+	return false;
+});
+
+// -----------
 
 
-	
 	// connet chat serve
 	connect();
 });
+
+
+
 
 liSpeakerClick =  function(){
 
