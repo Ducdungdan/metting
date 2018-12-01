@@ -10,7 +10,7 @@ import java.util.*;
 
 @Component
 public class MergeFileExcelsUtil {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
     @Autowired
     ReadFileExcelUtil readFileExcelUtil;
     public List<Vector<String>> merge(int roomId){

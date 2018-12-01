@@ -170,6 +170,7 @@ public class UploadController {
         p.setAlignment(ParagraphAlignment.CENTER);
         p.createRun().setText("BIÊN BẢN CUỘC HỌP");
         
+        //roomService.updateRoomFileContent(roomId, 14);
         
         if (datas.size() > 1) {
         	document.createParagraph()

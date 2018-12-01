@@ -1042,11 +1042,11 @@ public List<Map<String, Object>> getReporters(int userId) {
     		if(spaceNameIndex == -1) {
     			lastName = fullName;
     		} else {
-    			lastName = fullName.substring(spaceNameIndex);
-    			firstName = fullName.substring(0, spaceNameIndex - 1);
+    			lastName = fullName.substring(spaceNameIndex + 1);
+    			firstName = fullName.substring(0, spaceNameIndex);
     		}
     		
-    		RoomSpeaker roomSpeaker = roomSpeakerRepository.findByFirstNameAndLastNameAndRoomId(lastName, firstName, roomId);
+    		RoomSpeaker roomSpeaker = roomSpeakerRepository.findByFirstNameAndLastNameAndRoomId(firstName, lastName, roomId);
     		
     		if(roomSpeaker == null) {
     			roomSpeaker = new RoomSpeaker();
