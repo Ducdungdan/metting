@@ -3,7 +3,8 @@
 	  xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8"></meta>
-	<link rel="stylesheet" type="text/css" media="all"  href="bootstrap.css" />
+	<link rel="stylesheet"
+		  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
 	<div class="container">
@@ -17,34 +18,28 @@
 			</div>
 		</div>
 		<div class="row text-center">
-			<h1 style="font-style: bold">BIÊN BẢN CUỘC HỌP</h1>
+			<h1>BIÊN BẢN CUỘC HỌP</h1>
 			<h2>Về vấn đề hợp đồng lao động</h2>
 		</div>
 		<div class="content-report">
+			<!--<div class="row">-->
+				<!--<p>Thời gian bắt đầu: <span></span></p>-->
+			<!--</div>-->
 			<div class="row">
-				<p>Thời gian bắt đầu: 9h35 </p>
+				<p>Địa điểm: Phòng hội nghị Trung tâm VFF</p>
 			</div>
 			<div class="row">
-				<p>Dia diem: Phòng hội nghị Trung tâm </p>
-			</div>
-			<div class="row">
-				<p>Thành phần tham dự: Lan Anh, Kim Anh, Nguyễn Minh, Trình Đăng</p>
-			</div>
-			<div class="row">
-				<p>Chu tri: Nguyễn Minh</p>
-			</div>
-			<div class="row">
-				<p>Thu ky: Trình Đăng</p>
+				<p>Thành phần tham dự: <span th:text="${spkStr}"></span></p>
 			</div>
 			<div class="row">
 				<p>Nội dung cuộc họp: </p>
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th width="10%">Bắt đầu</th>
-							<th width="10%">Kết thúc</th>
-							<th width="20%">Người nói</th>
-							<th>Nội dung</th>
+							<th width="15%">Bắt đầu</th>
+							<th width="15%">Kết thúc</th>
+							<th width="30%">Người nói</th>
+							<th width="40%">Nội dung</th>
 						</tr>
 					</thead>
 					<tbody>

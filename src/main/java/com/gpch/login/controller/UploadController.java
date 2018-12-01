@@ -165,6 +165,7 @@ public class UploadController {
         //List<Vector<String>> datas = mergeFileExcelsUtil.merge(roomId);
         List<Map<String, Object>> datas = roomService.getRoomTranscript(roomId);
         List<Vector<String>> datasHtml = new ArrayList<>();
+        List<String> speakers = new ArrayList<>();
         //Blank Document
         XWPFDocument document = new XWPFDocument();
         XWPFParagraph p = document.createParagraph();
@@ -228,6 +229,10 @@ public class UploadController {
             tableRow.getCell(2).setText(spk);
             tableRow.getCell(3).setText(ctn);
 
+            if(checkSpeaker(speakers, spk)){
+                speakers.add(spk);
+            }
+
             Vector<String> v = new Vector<>();
             v.add(start);
             v.add(end);
@@ -243,8 +248,25 @@ public class UploadController {
             e.printStackTrace();
         }
         System.out.println("create_table.docx written successully");
+        String spkStr = "";
+        for(int i = 0; i< speakers.size(); i++){
+            spkStr += speakers.get(i);
+            if(i != speakers.size()-1){
+                spkStr += ", ";
+            }
+        }
         modelAndView.addObject("datas", datasHtml);
+        modelAndView.addObject("spkStr", spkStr);
         return modelAndView;
+    }
+
+    public boolean checkSpeaker(List<String> speakers, String name){
+        for(String s: speakers){
+            if(s.equals(name)){
+                return false;
+            }
+        }
+        return true;
     }
 
 }
