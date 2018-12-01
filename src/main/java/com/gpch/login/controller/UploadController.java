@@ -3,6 +3,7 @@ package com.gpch.login.controller;
 import com.gpch.login.model.FileSave;
 import com.gpch.login.model.User;
 import com.gpch.login.service.FileService;
+import com.gpch.login.service.RoomService;
 import com.gpch.login.utils.MergeFileExcelsUtil;
 import com.gpch.login.utils.PdfGenerator;
 import com.gpch.login.utils.ReadFileExcelUtil;
@@ -29,6 +30,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,9 @@ public class UploadController {
     MergeFileExcelsUtil mergeFileExcelsUtil;
     @Autowired
     PdfGenerator pdfGenerator;
+    
+    @Autowired
+    RoomService roomService;
     
     @Autowired
     private ServletContext servletContext;
@@ -156,20 +162,39 @@ public class UploadController {
     public String genDoc(@PathVariable int roomId){
         String rootPath = System.getProperty("user.dir");
         String path_export = rootPath + "/src/main/resources/reports/";
-        List<Vector<String>> datas = mergeFileExcelsUtil.merge(roomId);
+        //List<Vector<String>> datas = mergeFileExcelsUtil.merge(roomId);
+        List<Map<String, Object>> datas = roomService.getRoomTranscript(roomId);
         //Blank Document
         XWPFDocument document = new XWPFDocument();
         XWPFParagraph p = document.createParagraph();
         p.setAlignment(ParagraphAlignment.CENTER);
         p.createRun().setText("BIÊN BẢN CUỘC HỌP");
+        
+        
+        if (datas.size() > 1) {
+        	document.createParagraph()
+        	.createRun()
+        	.setText("Thời gian bắt đầu: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)datas.get(0).get("start")).getTime()));
+        	
+        	document.createParagraph()
+        	.createRun()
+        	.setText("Thời gian kết thúc: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)datas.get(datas.size()-1).get("end")).getTime()));
+        	
+        } else {
+        	document.createParagraph()
+        	.createRun()
+        	.setText("Thời gian bắt đầu: ");
+        	
+        	document.createParagraph()
+        	.createRun()
+        	.setText("Thời gian kết thúc: ");
 
-        document.createParagraph()
-                .createRun()
-                .setText("Thời gian bắt đầu: 28-11-2018 9:00:00");
-
-        document.createParagraph()
-                .createRun()
-                .setText("Thời gian kết thúc: 28-11-2018 10:00:00");
+        }
+        
+        File f = new File(path_export + "report_" + roomId +".docx");
+        if(f.exists() && !f.isDirectory()) { 
+            f.delete();
+        }
 
         //Write the Document in file system
         FileOutputStream out = null;
@@ -188,12 +213,14 @@ public class UploadController {
         tableRowOne.addNewTableCell().setText("Người nói");
         tableRowOne.addNewTableCell().setText("Nội dung");
 
-        for(Vector<String> data: datas){
+        for(Map<String, Object> data: datas){
+        	Map<String, Object> speaker = (Map<String, Object>) data.get("speaker");
             XWPFTableRow tableRow = table.createRow();
-            tableRow.getCell(0).setText(data.get(0));
-            tableRow.getCell(1).setText(data.get(1));
-            tableRow.getCell(2).setText(data.get(4));
-            tableRow.getCell(3).setText(data.get(2));
+            
+            tableRow.getCell(0).setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("start")).getTime()));
+            tableRow.getCell(1).setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("end")).getTime()));
+            tableRow.getCell(2).setText((String)speaker.get("firstName") + " " + (String)speaker.get("lastName") );
+            tableRow.getCell(3).setText((String)data.get("content"));
         }
 
         try {
