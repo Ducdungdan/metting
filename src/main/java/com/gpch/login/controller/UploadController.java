@@ -5,7 +5,7 @@ import com.gpch.login.model.User;
 import com.gpch.login.service.FileService;
 import com.gpch.login.service.RoomService;
 import com.gpch.login.utils.MergeFileExcelsUtil;
-import com.gpch.login.utils.PdfGenerator;
+
 import com.gpch.login.utils.ReadFileExcelUtil;
 import com.itextpdf.text.DocumentException;
 
@@ -45,8 +45,7 @@ public class UploadController {
 
     @Autowired
     MergeFileExcelsUtil mergeFileExcelsUtil;
-    @Autowired
-    PdfGenerator pdfGenerator;
+   
     
     @Autowired
     RoomService roomService;
@@ -112,7 +111,7 @@ public class UploadController {
     @RequestMapping(value = "/report_rom_1.pdf", method = RequestMethod.GET, produces="application/vnd.xls")
     public ResponseEntity<ByteArrayResource> genPDF(HttpServletRequest request, HttpServerResponse reponse){
         try {
-            pdfGenerator.genPDF2(1);
+            //pdfGenerator.genPDF2(1);
             
             String rootPath = System.getProperty("user.dir");
             String path1 = rootPath + "/src/main/resources/reports/report_rom_1.pdf";
@@ -147,8 +146,6 @@ public class UploadController {
 								.body(resource);
 		    //return bytes;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

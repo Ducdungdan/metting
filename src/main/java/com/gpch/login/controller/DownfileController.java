@@ -5,7 +5,7 @@ import com.gpch.login.model.User;
 import com.gpch.login.service.FileService;
 import com.gpch.login.service.RoomService;
 import com.gpch.login.utils.MergeFileExcelsUtil;
-import com.gpch.login.utils.PdfGenerator;
+
 import com.gpch.login.utils.ReadFileExcelUtil;
 import com.itextpdf.text.DocumentException;
 
@@ -48,8 +48,6 @@ public class DownfileController {
 
     @Autowired
     MergeFileExcelsUtil mergeFileExcelsUtil;
-    @Autowired
-    PdfGenerator pdfGenerator;
     
     @Autowired
     FileService fileService;
