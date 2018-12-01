@@ -3,11 +3,17 @@ package com.gpch.login.controller;
 import com.gpch.login.model.FileSave;
 import com.gpch.login.model.User;
 import com.gpch.login.service.FileService;
+import com.gpch.login.service.RoomService;
 import com.gpch.login.utils.MergeFileExcelsUtil;
 import com.gpch.login.utils.PdfGenerator;
 import com.gpch.login.utils.ReadFileExcelUtil;
 import com.itextpdf.text.DocumentException;
 
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -23,11 +29,15 @@ import reactor.ipc.netty.http.server.HttpServerResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -45,6 +55,9 @@ public class DownfileController {
     FileService fileService;
     @Autowired
     private ServletContext servletContext;
+    
+    @Autowired
+    RoomService roomService;
     
     @Autowired
     ReadFileExcelUtil readFileExcelUtil;
@@ -98,14 +111,85 @@ public class DownfileController {
     }
 
     @RequestMapping(value = "/report/{roomId}", method = RequestMethod.GET, produces="application/vnd.xls")
-    public ResponseEntity<ByteArrayResource> genPDF(HttpServletRequest request, HttpServerResponse reponse){
+    public ResponseEntity<ByteArrayResource> genPDF(@PathVariable int roomId, HttpServletRequest request, HttpServerResponse reponse){
+    	
+    	
     	try {
             //pdfGenerator.genPDF2(1);
             
             String rootPath = System.getProperty("user.dir");
-            String path1 = rootPath + "/src/main/resources/reports/report_1.docx";
-            String filenameDB = "report_1.docx";
+            String path1 = rootPath + "/src/main/resources/reports/report_"+roomId+".docx";
+            String path_export = rootPath + "/src/main/resources/reports/";
+            String filenameDB = "report_"+roomId+".docx";
             File f = new File(path1 + "");
+            
+            if(f.exists() && !f.isDirectory()) { 
+                
+            } else {
+            	List<Map<String, Object>> datas = roomService.getRoomTranscript(roomId);
+                //Blank Document
+                XWPFDocument document = new XWPFDocument();
+                XWPFParagraph p = document.createParagraph();
+                p.setAlignment(ParagraphAlignment.CENTER);
+                p.createRun().setText("BIÊN BẢN CUỘC HỌP");
+                
+                
+                if (datas.size() > 1) {
+                	document.createParagraph()
+                	.createRun()
+                	.setText("Thời gian bắt đầu: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)datas.get(0).get("start")).getTime()));
+                	
+                	document.createParagraph()
+                	.createRun()
+                	.setText("Thời gian kết thúc: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)datas.get(datas.size()-1).get("end")).getTime()));
+                	
+                } else {
+                	document.createParagraph()
+                	.createRun()
+                	.setText("Thời gian bắt đầu: ");
+                	
+                	document.createParagraph()
+                	.createRun()
+                	.setText("Thời gian kết thúc: ");
+
+                }
+
+                //Write the Document in file system
+                FileOutputStream out = null;
+                try {
+                    out = new FileOutputStream(new File(path_export + "report_" + roomId +".docx"));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                //create table
+                XWPFTable table = document.createTable();
+                //create first row
+                XWPFTableRow tableRowOne = table.getRow(0);
+                tableRowOne.getCell(0).setText("Bắt đầu");
+                tableRowOne.addNewTableCell().setText("Kết thúc");
+                tableRowOne.addNewTableCell().setText("Người nói");
+                tableRowOne.addNewTableCell().setText("Nội dung");
+
+                for(Map<String, Object> data: datas){
+                	Map<String, Object> speaker = (Map<String, Object>) data.get("speaker");
+                    XWPFTableRow tableRow = table.createRow();
+                    
+                    tableRow.getCell(0).setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("start")).getTime()));
+                    tableRow.getCell(1).setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("end")).getTime()));
+                    tableRow.getCell(2).setText((String)speaker.get("firstName") + " " + (String)speaker.get("lastName") );
+                    tableRow.getCell(3).setText((String)data.get("content"));
+                }
+
+                try {
+                    document.write(out);
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            f = new File(path1 + "");
+            
 			FileInputStream fi = new FileInputStream(f);
 			byte[] bytes = new byte[(int) f.length()];
 			fi.read(bytes);
@@ -113,9 +197,6 @@ public class DownfileController {
 //			reponse.addHeader("content-disposition", "attachment;filename="
 //					+ filenameDB);
 //			
-			
-			
-			
 			
 			String mineType = servletContext.getMimeType(filenameDB);
 			
