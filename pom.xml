@@ -157,6 +157,11 @@
             <artifactId>poi</artifactId>
             <version>3.17</version>
         </dependency>
+        <dependency>
+		    <groupId>com.sun.xml.fastinfoset</groupId>
+		    <artifactId>FastInfoset</artifactId>
+		    <version>1.2.1</version>
+		</dependency>
     </dependencies>
 
 
