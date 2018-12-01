@@ -125,6 +125,10 @@ public class ChatController {
 				message  = new ChatMessage();
 				message.setType(MessageType.PULL_TRANSCRIPT);
 				this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
+				
+				message  = new ChatMessage();
+				message.setType(MessageType.PULL_SPEAKER);
+				this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
   			
   			}
   			
