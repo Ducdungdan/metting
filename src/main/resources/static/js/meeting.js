@@ -26,7 +26,8 @@ $("#formupfile").submit(function(evt){
 			$('#popUploadFile').modal('hide');
 			var code = response.code;
 			if(code == 0){
-				
+				var fileSaveId = parseInt(response.data.id);
+				sendFile(fileSaveId);
 			}
 		}
 	});
@@ -344,6 +345,7 @@ getRoomTranscript = function(){
 			var code = response.code;
 			if(code == 0){
 				var listTranscript = response.data;
+				$('.lstMessageMerge').children().remove().end(); 
 				for (var i = 0; i < listTranscript.length; i++) {
 					var transcript = listTranscript[i];
 					var edited = transcript.edited;
@@ -353,7 +355,13 @@ getRoomTranscript = function(){
 					var endtime = getTimeShow(new Date(transcript.end));
 					var time  = starttime +" - " + endtime;
 					var content = transcript.content;
-					addTranscript(content,fullname,time, id);
+					var userupdate = transcript.editingByUser;
+					var nameUserUpdate = "";
+					if(userupdate != null){
+						nameUserUpdate = userupdate.firstName +" " + userupdate.lastName;
+					}
+
+					addTranscript(content,fullname,time, id,nameUserUpdate);
 				}
 
 			}else {
@@ -408,7 +416,7 @@ addHistoryItem = function(time, content, updatedBy){
 	historyArea.appendChild(historyitem);
 }
 
-addTranscript = function(message, fullName, time, id){
+addTranscript = function(message, fullName, time, id, nameUserUpdate){
 	
 	var lstFullNameSplit = fullName.split(" ");
 	var nameDisplay = "";
@@ -437,6 +445,20 @@ addTranscript = function(message, fullName, time, id){
 	timeElement.style['font-style'] ='italic';
 	messageElement.appendChild(timeElement);
 	var textElement = document.createElement('textarea');
+	var functionNameEdit = "editingTranscript("+id+")";
+	textElement.setAttribute('onfocus',functionNameEdit);
+	var functionNameRemoveEdit = "removeEditing("+id+")";
+	textElement.setAttribute('onfocusout',functionNameRemoveEdit);
+	var spanNotifi = document.createElement('h6');
+	var textnameuserupdate ="";
+	if(nameUserUpdate.length > 0){
+		textnameuserupdate = nameUserUpdate +" is editting .....";
+	}
+	
+	var spanNotifiText= document.createTextNode(textnameuserupdate);
+	spanNotifi.appendChild(spanNotifiText);
+
+
 	var messageText = document.createTextNode(message);
 	var icondelete = document.createElement('i');
 	var iconsave = document.createElement('i');
@@ -469,6 +491,7 @@ addTranscript = function(message, fullName, time, id){
 	textElement.style['display']='inline-block';
 	textElement.style['width']='90%';
 	messageElement.appendChild(textElement);
+	messageElement.appendChild(spanNotifi);
 	messageElement.appendChild(icondelete);
 	messageElement.appendChild(iconsave);
 	messageElement.appendChild(iconhistory);
@@ -946,7 +969,7 @@ function editingTranscript(id) {
 			type: 'EDITING'
 		};
 
-		stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+		stompClient.send("/app/chat.notify", {}, JSON.stringify(chatMessage));
 	}
 }
 
@@ -965,7 +988,7 @@ function removeEditing(id) {
 			type: 'REMOVE_EDITING'
 		};
 
-		stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+		stompClient.send("/app/chat.notify", {}, JSON.stringify(chatMessage));
 	}
 }
 
@@ -985,7 +1008,16 @@ function onMessageReceived(payload) {
 		var rpUserName = reporter.userName;
 		var createdDTG = "";
 		reciveMessage(content,firstname_spk, lastname_spk, starttime, endtime,rpFirstName,rpLastName,rpUserName,createdDTG);  
-	} 
+	}else if(message.type === 'ADD_FILE'){
+		var content1 = message.data.newFile.name;
+		var createdDTG = parseInt(message.data.newFile.CreatedDTG);
+		var rpFirstName = message.data.user.firstName;
+		var rpLastName = message.data.user.lastName;
+		var rpUserName = message.data.user.username;
+		reciveMessage(content1,"", "", "", "",rpFirstName,rpLastName,rpUserName,createdDTG);  
+	}else if(message.type ==='PULL_TRANSCRIPT'){
+		getRoomTranscript();
+	}
 }
 
 reciveMessage = function(message, firstname, lastname, starttime, endtime, rpFirstName, rpLastName, rpUserName,createdDTG){
