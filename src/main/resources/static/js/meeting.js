@@ -410,10 +410,10 @@ addHistoryItem = function(time, content, updatedBy){
 	iconElement.setAttribute('aria-hidden','true');
 	buttonElement.appendChild(iconElement);
 	undoElement.appendChild(buttonElement);
-	historyitem.appendChild(contentHistory);
-	historyitem.appendChild(undoElement);
+	historyItem.appendChild(contentHistory);
+	historyItem.appendChild(undoElement);
 	var historyArea = document.querySelector('.listHistory');
-	historyArea.appendChild(historyitem);
+	historyArea.appendChild(historyItem);
 }
 
 addTranscript = function(message, fullName, time, id, nameUserUpdate){
@@ -445,10 +445,11 @@ addTranscript = function(message, fullName, time, id, nameUserUpdate){
 	timeElement.style['font-style'] ='italic';
 	messageElement.appendChild(timeElement);
 	var textElement = document.createElement('textarea');
-	var functionNameEdit = "editingTranscript("+id+")";
+	var functionNameEdit = "loadDataToPopupShowEdit(" +id +",'"+ message +"')";
+	console.log(functionNameEdit);
 	textElement.setAttribute('onfocus',functionNameEdit);
 	var functionNameRemoveEdit = "removeEditing("+id+")";
-	textElement.setAttribute('onblur',functionNameRemoveEdit);
+	// textElement.setAttribute('onblur',functionNameRemoveEdit);
 	var spanNotifi = document.createElement('h6');
 	var textnameuserupdate ="";
 	if(nameUserUpdate.trim().length > 0){
@@ -503,6 +504,28 @@ addTranscript = function(message, fullName, time, id, nameUserUpdate){
 onclickShowPopup = function(id){
 	$("#popHistory").modal('show');
 	loadDataToPopupHistory(id);
+}
+
+loadDataToPopupShowEdit = function(id, message){
+	$("#hidTranscriptID").val(id);
+	$("#popShowEdit").modal('show');
+	editingTranscript(id);
+	$("#areTranscript").val(message);
+}
+
+removeEditingTranscript = function(){
+	var id = parseInt($("#hidTranscriptID").val());
+	removeEditing(id);
+
+}
+
+saveEditTranscript = function(){
+	var transcriptId = parseInt($("#hidTranscriptID").val());
+	var roomID = parseInt(GetURLParameter("roomID"));
+	var content = $("#areTranscript").val();
+	saveEditTranscripModifi(transcriptId,content,roomID);
+	$("#popShowEdit").modal('hide');
+
 }
 
 loadDataToPopupHistory = function(id){
@@ -988,6 +1011,22 @@ function removeEditing(id) {
 				transcriptId: transcriptId
 			},
 			type: 'REMOVE_EDITING'
+		};
+
+		stompClient.send("/app/chat.notify", {}, JSON.stringify(chatMessage));
+	}
+}
+
+function saveEditTranscripModifi(transcriptId,content,roomId) {
+	
+	if(transcriptId && stompClient) {
+		var chatMessage = {
+			data: {
+				roomId: roomId,
+				transcriptId: transcriptId,
+				content:content
+			},
+			type: 'EDIT'
 		};
 
 		stompClient.send("/app/chat.notify", {}, JSON.stringify(chatMessage));

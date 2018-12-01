@@ -362,6 +362,31 @@
 				<!-- <script src="<c:u"> </script>  -->
 			</div>
 
+			<div class="modal fade bd-example-modal-sm" id="popShowEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-sm" style="top: 30%;" role="document">
+					<div class="modal-content">
+						<div class="modal-header" style="background: aliceblue;">
+							<h3 class="modal-title" id="exampleModalLabel" style="display: inline; font-weight: bold;">Chỉnh sửa transcript</h3>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<input type="hidden" id="hidTranscriptID">
+								<textarea class="form-control" id="areTranscript">
+									
+								</textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick="saveEditTranscript()">OK</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="removeEditingTranscript()">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<script type="text/javascript" th:src="@{/js/bootstrap-multiselect.js}"></script>
 			<script type="text/javascript" th:src="@{/js/bootstrap-dropselect.js}"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
