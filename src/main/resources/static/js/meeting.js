@@ -448,10 +448,10 @@ addTranscript = function(message, fullName, time, id, nameUserUpdate){
 	var functionNameEdit = "editingTranscript("+id+")";
 	textElement.setAttribute('onfocus',functionNameEdit);
 	var functionNameRemoveEdit = "removeEditing("+id+")";
-	textElement.setAttribute('onfocusout',functionNameRemoveEdit);
+	textElement.setAttribute('onblur',functionNameRemoveEdit);
 	var spanNotifi = document.createElement('h6');
 	var textnameuserupdate ="";
-	if(nameUserUpdate.length > 0){
+	if(nameUserUpdate.trim().length > 0){
 		textnameuserupdate = nameUserUpdate +" is editting .....";
 	}
 	
@@ -954,11 +954,13 @@ function sendFile(fileSaveId) {
 	}
 }
 
+var id_transcript_focus = '';
 function editingTranscript(id) {
 	
 	
 	var roomID = parseInt(GetURLParameter("roomID"));
 	var transcriptId = parseInt(id);
+	id_transcript_focus = transcriptId;
 	
 	if(transcriptId && stompClient) {
 		var chatMessage = {
@@ -1017,6 +1019,7 @@ function onMessageReceived(payload) {
 		reciveMessage(content1,"", "", "", "",rpFirstName,rpLastName,rpUserName,createdDTG);  
 	}else if(message.type ==='PULL_TRANSCRIPT'){
 		getRoomTranscript();
+
 	}
 }
 
