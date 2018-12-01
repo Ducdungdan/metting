@@ -807,6 +807,8 @@ public List<Map<String, Object>> getReporters(int userId) {
     		transcripts.add(transcript);
     	});
     	
+    	transcripts.sort((t1, t2) -> (int)(((Timestamp)t1.get("start")).getTime() - ((Timestamp)t2.get("start")).getTime()));
+    	
     	return transcripts;
     }
     
@@ -837,7 +839,7 @@ public List<Map<String, Object>> getReporters(int userId) {
     		int index = roomTranscript.getIndex();
     		EditTranscriptHistory editTranscriptHistory = new EditTranscriptHistory();
     		editTranscriptHistory.setIndex(index);
-    		editTranscriptHistory.setContent(content);
+    		editTranscriptHistory.setContent(roomTranscript.getContent());
     		editTranscriptHistory.setCreatedBy(roomTranscript.getCreatedBy());
     		editTranscriptHistory.setCreatedDTG(roomTranscript.getCreatedDTG());
     		editTranscriptHistory.setEnd(roomTranscript.getEnd());
@@ -896,14 +898,11 @@ public List<Map<String, Object>> getReporters(int userId) {
     		
     		transcript.put("speaker", speaker);
     		
-    		if(roomTranscripted.getIndex() == roomTranscript.getIndex()) {
-    			transcript.put("Used", 1);
-    		} else {
-    			transcript.put("Used", 0);
+    		if(roomTranscripted.getIndex() != roomTranscript.getIndex()) {
+    			transcripts.add(transcript);
     		}
     		
     		
-    		transcripts.add(transcript);
     	});
     	
     	return transcripts;
@@ -930,6 +929,10 @@ public List<Map<String, Object>> getReporters(int userId) {
     	RoomTranscript roomTranscript = roomTranscriptRepository.findById(transcriptId);
     	List<EditTranscriptHistory> editTranscriptHistory = editTranscriptHistoryRepository.findByTranscriptId(transcriptId);
     	Boolean update = false;
+    	int oldIndex = roomTranscript.getIndex();
+    	String contentOld = roomTranscript.getContent();
+    	int updateBy = roomTranscript.getUpdatedBy();
+    	Timestamp updateDTG = roomTranscript.getCreatedDTG();
     	
     	for(int i = 0; i < editTranscriptHistory.size(); ++i) {
     		EditTranscriptHistory transcript = editTranscriptHistory.get(i);
@@ -942,6 +945,23 @@ public List<Map<String, Object>> getReporters(int userId) {
     			update = true;
     			break;
     		}
+    	}
+    	
+    	if(update && oldIndex == editTranscriptHistory.size()) {
+    		EditTranscriptHistory editTranscriptHistoryNew = new EditTranscriptHistory();
+    		editTranscriptHistoryNew.setIndex(oldIndex);
+    		editTranscriptHistoryNew.setContent(contentOld);
+    		editTranscriptHistoryNew.setCreatedBy(roomTranscript.getCreatedBy());
+    		editTranscriptHistoryNew.setCreatedDTG(roomTranscript.getCreatedDTG());
+    		editTranscriptHistoryNew.setEnd(roomTranscript.getEnd());
+    		editTranscriptHistoryNew.setStart(roomTranscript.getStart());
+    		editTranscriptHistoryNew.setTranscriptId(roomTranscript.getId());
+    		editTranscriptHistoryNew.setUpdatedBy(updateBy);
+    		editTranscriptHistoryNew.setUpdatedDTG(updateDTG);
+    		editTranscriptHistoryNew.setRoomId(roomTranscript.getRoomId());
+    		editTranscriptHistoryNew.setSpeakerId(roomTranscript.getSpeakerId());
+    		
+    		editTranscriptHistoryNew = editTranscriptHistoryRepository.save(editTranscriptHistoryNew);
     	}
     	
     	return update;
@@ -1005,7 +1025,7 @@ public List<Map<String, Object>> getReporters(int userId) {
     	
     	// 0 - "Start"
         // 1 - "End"
-    	// 3 - "Speaker"
+    	// 4 - "Speaker"
     	// 2 - "Content"
     	List<Vector<String>> fileContentMerge = mergeFileExcelsUtil.merge(roomId);
     	
@@ -1013,7 +1033,7 @@ public List<Map<String, Object>> getReporters(int userId) {
     	fileContentRepository.deleteAll(fileContentRepository.findByRoomId(roomId));
     	
     	fileContentMerge.forEach(file -> {
-    		String fullName = file.get(3);
+    		String fullName = file.get(4);
     		String firstName = "";
     		String lastName="";
     		
@@ -1388,7 +1408,10 @@ public List<Map<String, Object>> getReporters(int userId) {
     		
     		if(end > s - latency) {// s dan xen hoac long nhau
     			Map<String, Object> substrings = longestSubstring(content, c);
-				Map<String, Object> object1 = (Map<String, Object>) substrings.get("object1");
+				if(substrings==null) {
+					continue;
+				}
+    			Map<String, Object> object1 = (Map<String, Object>) substrings.get("object1");
 				Map<String, Object> object2 = (Map<String, Object>) substrings.get("object2");
     			
 				if(end > e - latency) { //2 doan long nhau

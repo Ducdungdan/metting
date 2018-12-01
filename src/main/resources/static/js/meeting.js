@@ -751,8 +751,6 @@ setPersmisson = function(){
 	$("#btn_send").addClass("displayhidden");
 	$("#btn_send").addClass("per_WRITE");
 
-
-
 }
 
 // hien thi danh sach cac speaker trong cuoc hop ỏ thanh bên phải	

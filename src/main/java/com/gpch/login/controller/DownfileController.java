@@ -9,6 +9,10 @@ import com.gpch.login.utils.ReadFileExcelUtil;
 import com.itextpdf.text.DocumentException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -38,6 +43,8 @@ public class DownfileController {
     
     @Autowired
     FileService fileService;
+    @Autowired
+    private ServletContext servletContext;
     
     @Autowired
     ReadFileExcelUtil readFileExcelUtil;
@@ -90,27 +97,44 @@ public class DownfileController {
 		return result;
     }
 
-    @RequestMapping(value = "/report_rom_1.pdf", method = RequestMethod.GET, produces="application/vnd.xls")
-    public byte[] genPDF(HttpServletRequest request, HttpServerResponse reponse){
-        try {
-            pdfGenerator.genPDF2(1);
+    @RequestMapping(value = "/report/{roomId}", method = RequestMethod.GET, produces="application/vnd.xls")
+    public ResponseEntity<ByteArrayResource> genPDF(HttpServletRequest request, HttpServerResponse reponse){
+    	try {
+            //pdfGenerator.genPDF2(1);
             
             String rootPath = System.getProperty("user.dir");
-            String path = rootPath + "/src/main/resources/reports/report_rom_1.pdf";
-            String filenameDB = "report_rom_1.pdf";
-            File f = new File(path + "");
+            String path1 = rootPath + "/src/main/resources/reports/report_1.docx";
+            String filenameDB = "report_1.docx";
+            File f = new File(path1 + "");
 			FileInputStream fi = new FileInputStream(f);
 			byte[] bytes = new byte[(int) f.length()];
 			fi.read(bytes);
 
-			reponse.addHeader("content-disposition", "inline;filename="
-					+ filenameDB);
+//			reponse.addHeader("content-disposition", "attachment;filename="
+//					+ filenameDB);
+//			
 			
 			
-		    return bytes;
+			
+			
+			String mineType = servletContext.getMimeType(filenameDB);
+			
+				MediaType mediaType = MediaType.parseMediaType("application/vnd.ms-word");
+				
+				Path path = Paths.get(path1);
+					byte[] data = Files.readAllBytes(path);
+					ByteArrayResource resource = new ByteArrayResource(data);
+
+						return ResponseEntity.ok()
+				// Content-Disposition
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + path.getFileName().toString())
+					// Content-Type
+							.contentType(mediaType) //
+								// Content-Lengh
+							.contentLength(data.length) //
+								.body(resource);
+		    //return bytes;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
