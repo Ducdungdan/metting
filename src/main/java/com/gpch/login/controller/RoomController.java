@@ -426,6 +426,71 @@ public class RoomController {
     	
     }
     
+    @RequestMapping(value = "/get-history-transcripts", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> getHistoryTranscripts(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	
+    	
+    	
+    	if(!payload.containsKey("roomId")||!payload.containsKey("transcriptId")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	int roomId = (int) payload.get("roomId");
+    	int transcriptId = (int) payload.get("transcriptId");
+    	
+    	//roomService.updateRoomTranscript(roomId, user.getId());
+    	List<Map<String, Object>> contents = roomService.getTranscriptHistory(roomId, transcriptId);
+    	
+    	result.put("code", 0);
+		result.put("message", HttpStatus.OK.name());
+		result.put("data", contents);
+        return result;
+    	
+    }
+    
+    @RequestMapping(value = "/edit-transcript", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public @ResponseBody Map<String, ? extends Object> editTranscript(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
+        
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	User user = (User) request.getAttribute("user");
+    	Map<String, Object> data = new HashMap<String, Object>();
+    	
+    	
+    	if(!payload.containsKey("transcriptId")||!payload.containsKey("content")) {
+    		result.put("code", 1);
+    		result.put("message", "Parameter not validate");
+            
+            return result;
+    	}
+    	
+    	String content = (String) payload.get("content");
+    	int transcriptId = (int) payload.get("transcriptId");
+    	
+    	//roomService.updateRoomTranscript(roomId, user.getId());
+    	Boolean rs = roomService.editTranscript(transcriptId, content, user.getId());
+    	
+    	if(rs) {
+    		data.put("updated", 1);
+    		result.put("code", 0);
+    		result.put("message", HttpStatus.OK.name());
+    		result.put("data", data);
+    	} else {
+    		data.put("updated", 0);
+    		result.put("code", 1);
+    		result.put("message", HttpStatus.OK.name());
+    		result.put("data", data);
+    	}
+    	
+        return result;
+    	
+    }
+    
     @RequestMapping(value = "/test-merge-stenograph-transcript", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
     public @ResponseBody Map<String, ? extends Object> testMergeStenographTranscript(HttpServletRequest request, @RequestBody Map<String, Object> payload) {
         

@@ -15,4 +15,5 @@ public interface RoomTranscriptRepository extends JpaRepository<RoomTranscript, 
 	RoomTranscript findById(int id);
 	List<RoomTranscript> findByRoomId(int roomId);
     List<RoomTranscript> findByRoomIdAndSpeakerIdAndEdited(int roomId, int speakerId, int edited);
+    List<RoomTranscript> findByEditingByUserId(int findByEditingByUserId);
 }

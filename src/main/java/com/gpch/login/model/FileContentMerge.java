@@ -67,16 +67,6 @@ public class FileContentMerge implements Serializable{
 		this.id = id;
 	}
 
-	
-
-	public int getSpeakerId() {
-		return speakerId;
-	}
-
-	public void setSpeakerId(int speakerId) {
-		this.speakerId = speakerId;
-	}
-
 	public int getRoomId() {
 		return roomId;
 	}
