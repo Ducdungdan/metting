@@ -190,7 +190,7 @@ public class ChatController {
 					}
 					
 					break;
-				case "ROMOVE_EDITING" :
+				case "REMOVE_EDITING" :
 					rs = roomService.removeEditingRoomTranscript((int)data.get("transcriptId"), user.getId());
 					if(rs) {
 						message.setType(MessageType.PULL_TRANSCRIPT);

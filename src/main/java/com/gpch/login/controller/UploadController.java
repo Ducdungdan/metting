@@ -8,6 +8,7 @@ import com.gpch.login.utils.PdfGenerator;
 import com.gpch.login.utils.ReadFileExcelUtil;
 import com.itextpdf.text.DocumentException;
 
+import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -23,12 +24,15 @@ import reactor.ipc.netty.http.server.HttpServerResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -146,6 +150,60 @@ public class UploadController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @RequestMapping(value = "/doc/{roomId}", method = RequestMethod.GET)
+    public String genDoc(@PathVariable int roomId){
+        String rootPath = System.getProperty("user.dir");
+        String path_export = rootPath + "/src/main/resources/reports/";
+        List<Vector<String>> datas = mergeFileExcelsUtil.merge(roomId);
+        //Blank Document
+        XWPFDocument document = new XWPFDocument();
+        XWPFParagraph p = document.createParagraph();
+        p.setAlignment(ParagraphAlignment.CENTER);
+        p.createRun().setText("BIÊN BẢN CUỘC HỌP");
+
+        document.createParagraph()
+                .createRun()
+                .setText("Thời gian bắt đầu: 28-11-2018 9:00:00");
+
+        document.createParagraph()
+                .createRun()
+                .setText("Thời gian kết thúc: 28-11-2018 10:00:00");
+
+        //Write the Document in file system
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(new File(path_export + "report_" + roomId +".docx"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //create table
+        XWPFTable table = document.createTable();
+        //create first row
+        XWPFTableRow tableRowOne = table.getRow(0);
+        tableRowOne.getCell(0).setText("Bắt đầu");
+        tableRowOne.addNewTableCell().setText("Kết thúc");
+        tableRowOne.addNewTableCell().setText("Người nói");
+        tableRowOne.addNewTableCell().setText("Nội dung");
+
+        for(Vector<String> data: datas){
+            XWPFTableRow tableRow = table.createRow();
+            tableRow.getCell(0).setText(data.get(0));
+            tableRow.getCell(1).setText(data.get(1));
+            tableRow.getCell(2).setText(data.get(4));
+            tableRow.getCell(3).setText(data.get(2));
+        }
+
+        try {
+            document.write(out);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("create_table.docx written successully");
+        return "report";
     }
 
 }

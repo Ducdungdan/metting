@@ -15,6 +15,7 @@ public class ChatMessage {
         EDITING,
         EDIT,
         PULL_REPORTER,
+        JUMP_TRANSCRIPT,
         PULL_SPEAKER,
         ADD_FILE,
         LEAVE

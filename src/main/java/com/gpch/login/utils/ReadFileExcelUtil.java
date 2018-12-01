@@ -6,10 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 @Component
 public class ReadFileExcelUtil {
@@ -60,6 +57,7 @@ public class ReadFileExcelUtil {
                 listVector.add(vector);
             }
         }
+        Collections.sort(listVector, new TranscriptComapre());
         return listVector;
     }
 
@@ -74,5 +72,19 @@ public class ReadFileExcelUtil {
             e.printStackTrace();
         }
         return sheet;
+    }
+
+    class TranscriptComapre implements Comparator<Vector<String>>{
+
+        @Override
+        public int compare(Vector<String> o1, Vector<String> o2) {
+            if(DateUtil.parseDate(o1.get(0)) > DateUtil.parseDate(o2.get(0))){
+                return 1;
+            }
+            if(DateUtil.parseDate(o1.get(0)) < DateUtil.parseDate(o2.get(0))){
+                return -1;
+            }
+            return 0;
+        }
     }
 }

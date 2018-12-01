@@ -10,88 +10,83 @@ import java.util.*;
 
 @Component
 public class MergeFileExcelsUtil {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
     @Autowired
     ReadFileExcelUtil readFileExcelUtil;
     public List<Vector<String>> merge(int roomId){
         List<Vector<String>> result = new ArrayList<>();
-        List<Vector<String>> resultFinal = new ArrayList<>();
         List<Vector<String>> listWho = readFileExcelUtil.readWhoFile(roomId);
         List<Vector<String>> listWhat = readFileExcelUtil.readWhatFile(roomId);
-        Map<String, List<String>> listF = new HashMap<>();
-        for(int i = 0; i< listWhat.size(); i++){
-            String f = listWhat.get(i).get(3);
-            if(listF.containsKey(f)){
-                List<String> newListSpeaker = getSpeaker(listWhat.get(i).get(0), listWhat.get(i).get(1), listWho);
-                List<String> oldListSpeaker = listF.get(f);
-                List<String> union = getUnion(newListSpeaker, oldListSpeaker);
-                listF.remove(f);
-                listF.put(f, union);
+        if(listWhat.size() == 0 || listWho.size() == 0){
+            return new ArrayList<>();
+        }
+        System.out.println("WHO: " + listWho.toString());
+        System.out.println("WHAT: " + listWhat.toString());
+
+        Map<String, List<String>> listTanSo = new HashMap<>();
+        for(Vector<String> what: listWhat){
+            if(listTanSo.containsKey(what.get(3))){
+                List<String> oldSpeakers = listTanSo.get(what.get(3));
+                List<String> newSpeakers = getSpeakerByF(what, listWho);
+                List<String> unionSpeaker = union(oldSpeakers, newSpeakers);
+                listTanSo.remove(what.get(3));
+                listTanSo.put(what.get(3), unionSpeaker);
             }else{
-                listF.put(f, getSpeaker(listWhat.get(i).get(0), listWhat.get(i).get(1), listWho));
+                listTanSo.put(what.get(3), getSpeakerByF(what, listWho));
             }
         }
-        for(int i = 0; i< listWhat.size(); i++){
-            listWhat.get(i).set(3, listF.get(listWhat.get(i).get(3)).get(0));
+
+        for(Vector<String> what: listWhat){
+            what.add(4, listTanSo.get(what.get(3)).get(0));
         }
+        System.out.println(listWhat.toString());
         return listWhat;
     }
 
-
-
-    public boolean checkTimeStamp(Vector<String> who, String start, String end) {
-        long a = convertTimeStamp(start);
-        long b = convertTimeStamp(end);
-        long c = convertTimeStamp(who.get(0));
-        long d = convertTimeStamp(who.get(1));
-        if (c != c || b != d) {
-            return false;
-        }
-        return true;
-    }
-
-    public List<String> getSpeaker(String start, String end, List<Vector<String>> listWho){
+    public List<String> getSpeakerByF(Vector<String> what, List<Vector<String>> listWho){
         List<String> listSpeaker = new ArrayList<>();
-        for(int i = 0; i< listWho.size(); i++){
-            if(checkTimeStamp(listWho.get(i), start, end)){
-                if(checkName(listSpeaker, listWho.get(i).get(2))){
-                    listSpeaker.add(listWho.get(i).get(2));
-                }
+        long start_1 = parseDate(what.get(0));
+        long end_1 = parseDate(what.get(1));
+        for(Vector<String> who: listWho){
+            long start_2 = parseDate(who.get(0));
+            long end_2 = parseDate(who.get(1));
+            if(checkTime(start_1, end_1, start_2, end_2)){
+                listSpeaker.add(who.get(2));
             }
         }
         return listSpeaker;
     }
 
-    public long convertTimeStamp(String time){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+
+    public long parseDate(String date){
+        Date d = null;
         try {
-            Date date = simpleDateFormat.parse(time);
-            return date.getTime();
+            d = simpleDateFormat.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
+            return -1;
         }
-        return -1L;
+        return d.getTime();
     }
 
-    public List<String> getUnion(List<String> list1, List<String> list2){
-        List<String> union = new ArrayList<>();
-        for(int i = 0; i< list1.size(); i++){
-            for(int j = 0; j < list2.size(); j++){
-                if(list1.get(i).equals(list2.get(j))){
-                    union.add(list1.get(i));
+    public boolean checkTime(long start_1, long end_1, long start_2, long end_2){
+        if(start_1 == start_2 && end_1 == end_2){
+            return true;
+        }
+        return false;
+    }
+
+    public List<String> union(List<String> l1, List<String> l2){
+        List<String> result = new ArrayList<>();
+        for(String e1: l1){
+            for(String e2: l2){
+                if(e1.endsWith(e2)){
+                    result.add(e1);
                     break;
                 }
             }
         }
-        return union;
-    }
-
-    public boolean checkName(List<String> list, String speaker){
-        for(String name: list){
-            if(list.equals(speaker)){
-                return false;
-            }
-        }
-        return true;
+        return result;
     }
 
 }
