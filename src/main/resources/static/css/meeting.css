@@ -255,3 +255,17 @@ body {
 		border: none;
 		background: no-repeat;
 	}
+
+	.historyitem {
+	border-top: 1px solid darkgray;
+	border-bottom: 1px solid darkgray;
+	padding: 15px;
+	}
+	
+	.contentHistory {
+	height: 50px;
+    overflow: auto;
+    border: 0.5px solid antiquewhite;
+    padding: 4px;
+    margin-bottom: 6px;
+	}

@@ -58,7 +58,7 @@
 						<button id="btn_send" class="btn btn-primary" style="width: 9%; font-size: 20px;" onclick="sendMessage()">
 							<i class="fa fa-paper-plane" aria-hidden="true"></i>
 						</button>
-						<button id="btn_send" class="btn btn-primary" style="width: 9%; font-size: 20px;" data-toggle="modal" data-target="#popUploadFile">
+						<button id="btn_send_file" class="btn btn-primary" style="width: 9%; font-size: 20px;" data-toggle="modal" data-target="#popUploadFile">
 							<i class="fa fa-upload" aria-hidden="true"></i>
 						</button>
 						
@@ -234,6 +234,13 @@
 							
 							<div class="modal-footer">
 								<button type="button" class="btn btn-primary" id="btnPopAddNew" onclick=""> OK</button>
+								<button type="button" class="btn btn-success" id="btnPopAddNew" title="Xem báo cáo" onclick="showReport()">
+									<i class="fa fa-eye" aria-hidden="true"></i>
+								</button>
+								<button type="button" class="btn btn-success" id="btnPopAddNew" title="Tải file báo cáo" 
+								onclick="downloadReport()">
+									<i class="fa fa-cloud-download" aria-hidden="true"></i>
+								</button>
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 							</div>
 						</div>
@@ -339,17 +346,7 @@
 						</div>
 						<div class="modal-body">
 							<div class="listHistory">
-								<div class="historyitem">
-									<div class="contentHistory">
-										<span>(12:12:12)</span><span> updated by Nguyen Dinh Thang  </span>
-										<p>Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa Chỉnh sửa </p>
-									</div>
-									<div>
-										<button type="button" style="    border: none;background: none">
-											<i class="fa fa-reply" aria-hidden="true"></i>
-										</button>
-									</div>
-								</div>
+								
 							</div>
 
 

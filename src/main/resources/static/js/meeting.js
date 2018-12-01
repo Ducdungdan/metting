@@ -1,6 +1,17 @@
+
+var active = 0;
 $(document).ready(function(){
 	showUserFullName();
 	var roomID = GetURLParameter("roomID");
+	 active = GetURLParameter("active");
+	if (active == 0) {
+		$(".sending").css("display","none");
+		$("#addUser").css("display","none");
+		$("#removeUser").css("display","none");
+		$("#btn_share_code").css("display","none");
+		$("#btn_finish_room").css("display","none");
+
+	}
 	getRoomInfor(roomID);
 	getRoomContent();
 	setPersmisson();
@@ -26,8 +37,10 @@ $("#formupfile").submit(function(evt){
 			$('#popUploadFile').modal('hide');
 			var code = response.code;
 			if(code == 0){
+				getRoomInfor(roomID);
 				var fileSaveId = parseInt(response.data.id);
 				sendFile(fileSaveId);
+
 			}
 		}
 	});
@@ -375,23 +388,26 @@ getRoomTranscript = function(){
 	});
 }
 
-addHistoryItem = function(time, content, updatedBy){
+addHistoryItem = function(time, content, updatedBy,index, transcriptId,roomID){
+	console.log(time);
 	var historyItem = document.createElement('div');
 	historyItem.classList.add('historyitem');
 
 	var contentHistory = document.createElement('div');
 	contentHistory.classList.add('contentHistory');
-	var time = document.createElement('span');
+	var timeElement = document.createElement('span');
 	var timeText = "("+ time + ")" ;
 	var timeTextNode= document.createTextNode(timeText);
-	time.appendChild(timeTextNode);
-	contentHistory.appendChild(time);
+	timeElement.appendChild(timeTextNode);
+	contentHistory.appendChild(timeElement);
 
 	var userupdate = document.createElement('span');
 	var text = "Updated by " + updatedBy;
 	var userupdateTextNode= document.createTextNode(text);
 	userupdate.appendChild(userupdateTextNode);
 	userupdate.style['font-style'] = 'italic';
+	userupdate.style['margin-left']='30px';
+	userupdate.style['font-weight']='700';
 	contentHistory.appendChild(userupdate);
 
 	var contentUpdate = document.createElement('p');
@@ -402,6 +418,8 @@ addHistoryItem = function(time, content, updatedBy){
 	// -- button undo
 	var undoElement = document.createElement('div');
 	var buttonElement = document.createElement('button');
+	var functionnameUndo ="undoHistory("+transcriptId+","+index+","+roomID+")";
+	buttonElement.setAttribute('onclick',functionnameUndo);
 	buttonElement.setAttribute("type","button");
 	buttonElement.style['border'] = 'none';
 	buttonElement.style['background'] = 'none';
@@ -445,57 +463,44 @@ addTranscript = function(message, fullName, time, id, nameUserUpdate){
 	timeElement.style['font-style'] ='italic';
 	messageElement.appendChild(timeElement);
 	var textElement = document.createElement('textarea');
+	if(active == 0){
+		textElement.disabled = true;
+	}
 	var functionNameEdit = "loadDataToPopupShowEdit(" +id +",'"+ message +"')";
 	console.log(functionNameEdit);
 	textElement.setAttribute('onfocus',functionNameEdit);
 	var functionNameRemoveEdit = "removeEditing("+id+")";
 	// textElement.setAttribute('onblur',functionNameRemoveEdit);
 	var spanNotifi = document.createElement('h6');
+	spanNotifi.style['font-weight'] = '700';
+	spanNotifi.style['font-style'] = 'italic';
 	var textnameuserupdate ="";
 	if(nameUserUpdate.trim().length > 0){
 		textnameuserupdate = nameUserUpdate +" is editting .....";
+		textElement.disabled = true;
 	}
 	
 	var spanNotifiText= document.createTextNode(textnameuserupdate);
 	spanNotifi.appendChild(spanNotifiText);
-
-
 	var messageText = document.createTextNode(message);
-	var icondelete = document.createElement('i');
-	var iconsave = document.createElement('i');
 	var iconhistory = document.createElement('i');
-	icondelete.setAttribute("class","fa fa-trash-o");
-	icondelete.style['color']='red';
-	icondelete.style['left']='unset';
-	icondelete.style['cursor']='-webkit-grab';
-	icondelete.setAttribute("aria-hidden","true");
-	icondelete.setAttribute("onclick","onclickDelelte()");
-	
-	iconsave.setAttribute("class","fa fa-floppy-o");
-	iconsave.style['color']='#4cae4c';
-	iconsave.style['left']='unset';
-	iconsave.style['cursor']='-webkit-grab';
-	iconsave.style['margin-left']='20px';
-	iconsave.setAttribute("aria-hidden","true");
-	iconsave.setAttribute("onclick","onclickSave()");
-	
 	iconhistory.setAttribute("class","fa fa-history");
 	iconhistory.style['color']='black';
 	iconhistory.style['left']='unset';
 	iconhistory.style['cursor']='-webkit-grab';
-	iconhistory.style['margin-left']='42px';
+	iconhistory.style['margin-left']='6px';
 	iconhistory.setAttribute("aria-hidden","true");
 	iconhistory.setAttribute("onclick","onclickShowPopup(" +id + ")");
-	
 	textElement.appendChild(messageText);
 	textElement.setAttribute("class","form-control");
 	textElement.style['display']='inline-block';
 	textElement.style['width']='90%';
 	messageElement.appendChild(textElement);
+	if(active == 1){
+		messageElement.appendChild(iconhistory);
+	}
+	
 	messageElement.appendChild(spanNotifi);
-	messageElement.appendChild(icondelete);
-	messageElement.appendChild(iconsave);
-	messageElement.appendChild(iconhistory);
 	var messageArea = document.querySelector('.lstMessageMerge');
 	messageArea.appendChild(messageElement);
 	messageArea.scrollTop = messageArea.scrollHeight;
@@ -542,13 +547,15 @@ loadDataToPopupHistory = function(id){
 			var code = response.code;
 			if(code == 0){
 				var listTranscriptHistory = response.data;
-
+				$('.listHistory').children().remove().end(); 
 				for (var i = 0; i < listTranscriptHistory.length; i++) {
 					var item = listTranscriptHistory[i];
 					var time = getTimeShow(new Date(item.updatedDTG));
 					var content = item.content;
 					var updateBy = item.updateBy.firstName + " " + item.updateBy.lastName;
-					addHistoryItem(time, content,updateBy);
+					var index = item.index;
+					var roomID = item.roomId;
+					addHistoryItem(time, content,updateBy,index,transcriptId,roomID);
 				}
 
 			}else {
@@ -582,8 +589,11 @@ addListReporter = function(){
 			if(code == 0){
 				console.log("Success");
 				alert("Đã thêm người thành công");
-				var url = "/meeting?roomID="+  GetURLParameter("roomID");
-				window.location.replace(url);
+				// var url = "/meeting?roomID="+  GetURLParameter("roomID");
+				$('#popAddNewMeeting').modal('hide');
+				var roomID = GetURLParameter("roomID");
+				getRoomInfor(roomID);
+				
 			}else {
 				console.log("Faild");
 				alert("Đã xảy ra lỗi trong quá trình thêm reporter");
@@ -815,11 +825,14 @@ lstUserIDRemoved= [];
  				var meetingStartTime = getTimeShow(new Date(roomInfor.createdDTG));
  				$("#meeting_time").text(meetingStartTime);
  				var lstSpeaker = response.data.speakers; // lay danh sach speaker trong room
+ 				$('#speaker').children().remove().end(); 
+
  				for(var i= 0; i< lstSpeaker.length; i++){
  					var item = lstSpeaker[i];
  					appendSpeakerToList(item.firstName, item.lastName, item.id);
  				}
  				var lstReporter = response.data.members; // lay danh sach reporter trong room
+ 				$('#users').children().remove().end(); 
  				for(var i=0; i< lstReporter.length; i++){
  					var item = lstReporter[i];
  					appendReporterToList(item.firstName, item.lastName, item.username);
@@ -877,7 +890,7 @@ lstUserIDRemoved= [];
  			var code = response.code;
  			if(code == 0){
  				console.log("Success");
- 				var url = "/meetingdetail?roomid="+roomID;
+ 				var url = "/meeting?roomID="+roomID+"&active=0";
  				window.location.replace(url);
  			}else {
  				console.log("Faild");
@@ -1033,6 +1046,24 @@ function saveEditTranscripModifi(transcriptId,content,roomId) {
 	}
 }
 
+
+function undoHistory(transcriptId,index,roomId) {
+	$('#popHistory').modal('hide');
+	if(transcriptId && stompClient) {
+		var chatMessage = {
+			data: {
+				roomId: roomId,
+				transcriptId: transcriptId,
+				index:index
+			},
+			type: 'JUMP_TRANSCRIPT'
+		};
+
+		stompClient.send("/app/chat.notify", {}, JSON.stringify(chatMessage));
+	}
+}
+
+
 function onMessageReceived(payload) {
 	console.log(payload);
 	var message = JSON.parse(payload.body);
@@ -1048,7 +1079,8 @@ function onMessageReceived(payload) {
 		var rpLastName = reporter.lastName;
 		var rpUserName = reporter.userName;
 		var createdDTG = "";
-		reciveMessage(content,firstname_spk, lastname_spk, starttime, endtime,rpFirstName,rpLastName,rpUserName,createdDTG);  
+		reciveMessage(content,firstname_spk, lastname_spk, starttime, endtime,rpFirstName,rpLastName,rpUserName,createdDTG); 
+		getRoomTranscript(); 
 	}else if(message.type === 'ADD_FILE'){
 		var content1 = message.data.newFile.name;
 		var createdDTG = parseInt(message.data.newFile.CreatedDTG);
@@ -1056,10 +1088,12 @@ function onMessageReceived(payload) {
 		var rpLastName = message.data.user.lastName;
 		var rpUserName = message.data.user.username;
 		reciveMessage(content1,"", "", "", "",rpFirstName,rpLastName,rpUserName,createdDTG);  
+		getRoomTranscript();
 	}else if(message.type ==='PULL_TRANSCRIPT'){
 		getRoomTranscript();
 
 	}
+
 }
 
 reciveMessage = function(message, firstname, lastname, starttime, endtime, rpFirstName, rpLastName, rpUserName,createdDTG){
@@ -1143,6 +1177,10 @@ setPersmisson = function(){
 	$("#message").addClass("per_WRITE");
 	$("#btn_send").addClass("displayhidden");
 	$("#btn_send").addClass("per_WRITE");
+	
+	$("#btn_send_file").addClass("displayhidden");
+	$("#btn_send_file").addClass("per_WRITE");
+
 
 }
 
@@ -1201,4 +1239,18 @@ appendReporterToList = function(firstname, lastname, username){
 
 gotoHome = function(){
 	window.location.replace("/default");
+}
+
+// ---------------------- Show report ----------------------
+showReport = function(){
+	var roomID = GetURLParameter("roomID");
+	var url = "/api/room/doc/" + roomID;
+	
+	window.open(url, "_blank", "toolbar=yes,top=50,left=50,width=1200,height=750");
+}
+
+downloadReport = function(){
+	var roomID = GetURLParameter("roomID");
+	var url = "/report/" + roomID;
+	window.location.replace(url);
 }

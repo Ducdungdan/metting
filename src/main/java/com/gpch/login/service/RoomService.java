@@ -405,7 +405,7 @@ public class RoomService{
 			List<Map<String, Object>> roles = new ArrayList<Map<String, Object>>();
 			
 			Room r = roomRepository.findById(roomId);
-			if(r!= null && r.getActive()!=0&&r.getDeleted()!=1) {
+			if(r!= null &&r.getDeleted()!=1) {
 				room.put("id", r.getId());
 				room.put("code", r.getCode());
 				room.put("name", r.getName());

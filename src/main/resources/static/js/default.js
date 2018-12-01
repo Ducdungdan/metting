@@ -135,11 +135,7 @@ closeReporter = function(id){
 
 navigateToDetail = function(active,idroom, roles){	
 	var url = ""; 
-	if(active == 1){
-		url="/meeting?roomID="+idroom;
-	}else{
-		url ="/meetingdetail?roomid="+idroom;
-	}
+	url ="/meeting?roomID="+idroom +"&active="+active;
 	document.cookie = "roles="+roles;
 	window.location.replace(url);
 }
