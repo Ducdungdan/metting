@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import reactor.ipc.netty.http.server.HttpServerResponse;
@@ -32,10 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -159,11 +157,14 @@ public class UploadController {
     }
 
     @RequestMapping(value = "/doc/{roomId}", method = RequestMethod.GET)
-    public String genDoc(@PathVariable int roomId){
+    public ModelAndView genDoc(@PathVariable int roomId){
         String rootPath = System.getProperty("user.dir");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("report");
         String path_export = rootPath + "/src/main/resources/reports/";
         //List<Vector<String>> datas = mergeFileExcelsUtil.merge(roomId);
         List<Map<String, Object>> datas = roomService.getRoomTranscript(roomId);
+        List<Vector<String>> datasHtml = new ArrayList<>();
         //Blank Document
         XWPFDocument document = new XWPFDocument();
         XWPFParagraph p = document.createParagraph();
@@ -217,11 +218,22 @@ public class UploadController {
         for(Map<String, Object> data: datas){
         	Map<String, Object> speaker = (Map<String, Object>) data.get("speaker");
             XWPFTableRow tableRow = table.createRow();
-            
-            tableRow.getCell(0).setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("start")).getTime()));
-            tableRow.getCell(1).setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("end")).getTime()));
-            tableRow.getCell(2).setText((String)speaker.get("firstName") + " " + (String)speaker.get("lastName") );
-            tableRow.getCell(3).setText((String)data.get("content"));
+
+            String start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("start")).getTime());
+            String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(((Timestamp)data.get("end")).getTime());
+            String spk = (String)speaker.get("firstName") + " " + (String)speaker.get("lastName");
+            String ctn = (String)data.get("content");
+            tableRow.getCell(0).setText(start);
+            tableRow.getCell(1).setText(end);
+            tableRow.getCell(2).setText(spk);
+            tableRow.getCell(3).setText(ctn);
+
+            Vector<String> v = new Vector<>();
+            v.add(start);
+            v.add(end);
+            v.add(spk);
+            v.add(ctn);
+            datasHtml.add(v);
         }
 
         try {
@@ -231,7 +243,8 @@ public class UploadController {
             e.printStackTrace();
         }
         System.out.println("create_table.docx written successully");
-        return "report";
+        modelAndView.addObject("datas", datasHtml);
+        return modelAndView;
     }
 
 }
