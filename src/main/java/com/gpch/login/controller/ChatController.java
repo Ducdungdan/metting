@@ -73,6 +73,10 @@ public class ChatController {
     				this.template.convertAndSend("/topic/"+roomId, message);
     				roomService.updateRoomContentMerge(roomId, user.getId());
     				roomService.updateRoomTranscript(roomId, user.getId());
+    			
+    				message  = new ChatMessage();
+    				message.setType(MessageType.PULL_TRANSCRIPT);
+    				this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
     			}
     			
     		}
@@ -117,6 +121,11 @@ public class ChatController {
   				this.template.convertAndSend("/topic/"+roomId, message);
   				roomService.updateRoomFileContent(roomId, user.getId());
 				roomService.updateRoomTranscript(roomId, user.getId());
+				
+				message  = new ChatMessage();
+				message.setType(MessageType.PULL_TRANSCRIPT);
+				this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
+  			
   			}
   			
   		}
@@ -159,5 +168,67 @@ public class ChatController {
     	    }
         return chatMessage;
     }
+    
+    @MessageMapping("/chat.notify")
+  public ChatMessage notifyRoom(@Payload ChatMessage chatMessage,
+                             SimpMessageHeaderAccessor headerAccessor, StompHeaderAccessor stompHeaderAccessor) {
+      // Add username in web socket session
+  	Map<String, Object> data = chatMessage.getData();
+  	
+  	      
+  	User user = (User) headerAccessor.getSessionAttributes().get("user");
+  	      ChatMessage message = new ChatMessage();
+  	      Boolean rs = false;
+  	      if (user != null) {
+  	    	  headerAccessor.getSessionAttributes().put("user", user);
+  	    	  
+  	    	  switch (chatMessage.getType().toString()) {
+				case "EDITING" :
+					rs = roomService.setEditingRoomTranscript((int)data.get("transcriptId"), user.getId());
+					if(rs) {
+						message.setType(MessageType.PULL_TRANSCRIPT);
+					}
+					
+					break;
+				case "ROMOVE_EDITING" :
+					rs = roomService.removeEditingRoomTranscript((int)data.get("transcriptId"), user.getId());
+					if(rs) {
+						message.setType(MessageType.PULL_TRANSCRIPT);
+					}
+					
+					break;
+				case "PULL_SPEAKER" :
+					message.setType(MessageType.PULL_SPEAKER);
+					
+					break;
+					
+				case "EDIT" :
+			    	
+			    	rs = roomService.editTranscript((int) data.get("transcriptId"), (String) data.get("content"), user.getId());
+			    	if(rs) {
+			    		roomService.removeEditingRoomTranscript((int)data.get("transcriptId"), user.getId());
+			    		message.setType(MessageType.PULL_TRANSCRIPT);
+			    	}
+					
+					break;
+				case "JUMP_TRANSCRIPT" :
+			    	
+			    	rs = roomService.jumpTranscript((int) data.get("transcriptId"), (int) data.get("index"), user.getId());
+			    	if(rs) {
+			    		roomService.removeEditingRoomTranscript((int)data.get("transcriptId"), user.getId());
+			    		message.setType(MessageType.PULL_TRANSCRIPT);
+			    	}
+					
+					break;
+	
+				default:
+					break;
+				}
+  	    	  
+  	    	this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
+  	      }
+  	    
+      return chatMessage;
+  }
 
 }

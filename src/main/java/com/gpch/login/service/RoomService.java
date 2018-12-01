@@ -865,6 +865,88 @@ public List<Map<String, Object>> getReporters(int userId) {
     	return false;
     }
     
+    public List<Map<String, Object>> getTranscriptHistory(int roomId, int transcriptId) {
+    	List<Map<String, Object>> transcripts = new ArrayList<Map<String,Object>>();
+    	List<EditTranscriptHistory> roomTranscripts = editTranscriptHistoryRepository.findByTranscriptId(transcriptId);
+    	RoomTranscript roomTranscripted = roomTranscriptRepository.findById(transcriptId);
+    	
+    	roomTranscripts.forEach(roomTranscript -> {
+    		Map<String, Object> transcript = new HashMap<String, Object>();
+    		Map<String, Object> speaker = new HashMap<String, Object>();
+    		Map<String, Object> user = new HashMap<String, Object>();
+    		User u = userRepository.findById(roomTranscript.getUpdatedBy());
+    		
+    		user.put("id", u.getId());
+    		user.put("firstName", u.getFirstName());
+    		user.put("lastName", u.getLastName());
+    		transcript.put("id", roomTranscript.getId());
+    		transcript.put("start", roomTranscript.getStart());
+    		transcript.put("end", roomTranscript.getEnd());
+    		transcript.put("content", roomTranscript.getContent());
+    		transcript.put("index", roomTranscript.getIndex());
+    		
+    		transcript.put("roomId", roomTranscript.getRoomId());
+    		transcript.put("updateBy", user);
+    		transcript.put("updatedDTG", roomTranscript.getUpdatedDTG());
+    		
+    		RoomSpeaker roomSpeaker = roomSpeakerRepository.findById(roomTranscript.getSpeakerId());
+    		speaker.put("id", roomSpeaker.getId());
+    		speaker.put("firstName", roomSpeaker.getFirstName());
+    		speaker.put("lastName", roomSpeaker.getLastName());
+    		
+    		transcript.put("speaker", speaker);
+    		
+    		if(roomTranscripted.getIndex() == roomTranscript.getIndex()) {
+    			transcript.put("Used", 1);
+    		} else {
+    			transcript.put("Used", 0);
+    		}
+    		
+    		
+    		transcripts.add(transcript);
+    	});
+    	
+    	return transcripts;
+    	
+    }
+    
+    public List<Integer> DiscontentRemoveTranscriptEditing(int userId) {
+    	List<RoomTranscript> transcriptsEditing = roomTranscriptRepository.findByEditingByUserId(userId);
+    	List<Integer> roomIdsUpdate = new ArrayList<Integer>();
+    	for(int i = 0; i < transcriptsEditing.size(); ++i) {
+    		RoomTranscript transcript = transcriptsEditing.get(i);
+    		transcript.setEditingByUserId(0);
+    		transcript = roomTranscriptRepository.save(transcript);
+    		if(roomIdsUpdate.indexOf(transcript.getRoomId()) == -1) {
+    			roomIdsUpdate.add(transcript.getRoomId());
+    		}
+    	}
+    	
+    	return roomIdsUpdate;
+    	
+    }
+    
+    public Boolean jumpTranscript(int transcriptId, int index, int userId) {
+    	RoomTranscript roomTranscript = roomTranscriptRepository.findById(transcriptId);
+    	List<EditTranscriptHistory> editTranscriptHistory = editTranscriptHistoryRepository.findByTranscriptId(transcriptId);
+    	Boolean update = false;
+    	
+    	for(int i = 0; i < editTranscriptHistory.size(); ++i) {
+    		EditTranscriptHistory transcript = editTranscriptHistory.get(i);
+    		if(transcript.getIndex() == index) {
+    			roomTranscript.setContent(transcript.getContent());
+    			roomTranscript.setIndex(index);
+    			roomTranscript.setUpdatedBy(userId);
+    			roomTranscript.setUpdatedDTG(new Timestamp(new Date().getTime()));
+    			roomTranscript = roomTranscriptRepository.save(roomTranscript);
+    			update = true;
+    			break;
+    		}
+    	}
+    	
+    	return update;
+    }
+    
     public void updateRoomContentMerge(int roomId, int userId) {
     	List<RoomContent> stenographsM = roomContentRepository.findByRoomId(roomId);
     	List<Map<String, Object>> speakers = new ArrayList<Map<String,Object>>();

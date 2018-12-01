@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository("EditTranscriptHistoryRepository")
 public interface EditTranscriptHistoryRepository extends JpaRepository<EditTranscriptHistory, Integer> {
-    List<EditTranscriptHistory> findById(int id);
+    EditTranscriptHistory findById(int id);
+    List<EditTranscriptHistory> findByRoomId(int roomId);
+    List<EditTranscriptHistory> findByTranscriptId(int transcriptId);
 }

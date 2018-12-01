@@ -9,7 +9,13 @@ public class ChatMessage {
     public enum MessageType {
         CHAT,
         JOIN,
+        PULL_TRANSCRIPT,
         NOTIFY,
+        REMOVE_EDITING,
+        EDITING,
+        EDIT,
+        PULL_REPORTER,
+        PULL_SPEAKER,
         ADD_FILE,
         LEAVE
     }
