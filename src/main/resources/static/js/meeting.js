@@ -3,7 +3,7 @@ var active = 0;
 $(document).ready(function(){
 	showUserFullName();
 	var roomID = GetURLParameter("roomID");
-	 active = GetURLParameter("active");
+	active = GetURLParameter("active");
 	if (active == 0) {
 		$(".sending").css("display","none");
 		$("#addUser").css("display","none");
@@ -344,10 +344,36 @@ loadDatToPopTranscriptMerge = function(){
 	getRoomTranscript();
 }
 
+convertDateToSecond = function(hour, minute, second){
+	return hour * 60 * 60 + minute * 60 + second;
+}
+
+getValueInputTime = function(id){
+	var element  = $("#"+id).val();
+	if(element.length == 0) return 0;
+	else return parseInt(element);
+}
 
 getRoomTranscript = function(){
 	var roomid = GetURLParameter('roomID');
 	var objectReq = {roomId : parseInt(roomid)};
+	// var speakerIDSearch = $("#selectuser").chosen().val();
+
+	
+	// key search
+	var startH = getValueInputTime('startH');
+	var startM = getValueInputTime('startM');
+	var startS = getValueInputTime('startS');
+	var startTimeKey = convertDateToSecond(startH, startM, startS);
+	console.log(startTimeKey);
+
+	var endH = getValueInputTime('endH');
+	var endM = getValueInputTime('endM');
+	var endS = getValueInputTime('endS');
+	var endTimeKey = convertDateToSecond(endH, endM, endS);
+	console.log(endTimeKey);
+
+
 	$.ajax({
 		url:'/api/room/get-room-transcripts',
 		type:'post',
@@ -357,19 +383,30 @@ getRoomTranscript = function(){
 		success: function(response){
 			var code = response.code;
 			if(code == 0){
+				var speakerIDSearch = $("#selectuser").chosen().val();
+				console.log(speakerIDSearch);
 				var listTranscript = response.data;
 				$('.lstMessageMerge').children().remove().end(); 
 				for (var i = 0; i < listTranscript.length; i++) {
 					var transcript = listTranscript[i];
 					var edited = transcript.edited;
 					var fullname = transcript.speaker.firstName +" " + transcript.speaker.lastName;
+					var idSpeaker = transcript.speaker.id;
 					var id = transcript.id;
 					var starttime = getTimeShow(new Date(transcript.start));
+					var starttimeSecond = convertDateToSecond(new Date(transcript.start).getHours(), new Date(transcript.start).getMinutes(), new Date(transcript.start).getSeconds());
+					console.log(starttimeSecond);
 					var endtime = getTimeShow(new Date(transcript.end));
+					var endtimeSecond = convertDateToSecond(new Date(transcript.end).getHours(), new Date(transcript.end).getMinutes(), new Date(transcript.end).getSeconds());
+					console.log(endtimeSecond);
 					var time  = starttime +" - " + endtime;
 					var content = transcript.content;
 					var userupdate = transcript.editingByUser;
 					var nameUserUpdate = "";
+
+					if((speakerIDSearch != idSpeaker && speakerIDSearch != 0) || (startTimeKey > starttimeSecond && startTimeKey != 0) || (endTimeKey < endtimeSecond && endTimeKey != 0)){
+						continue;
+					}
 					if(userupdate != null){
 						nameUserUpdate = userupdate.firstName +" " + userupdate.lastName;
 					}
@@ -386,6 +423,10 @@ getRoomTranscript = function(){
 			console.log("Server error");
 		}
 	});
+}
+
+searchTranscript = function(){
+	getRoomTranscript();
 }
 
 addHistoryItem = function(time, content, updatedBy,index, transcriptId,roomID){
@@ -826,11 +867,15 @@ lstUserIDRemoved= [];
  				$("#meeting_time").text(meetingStartTime);
  				var lstSpeaker = response.data.speakers; // lay danh sach speaker trong room
  				$('#speaker').children().remove().end(); 
-
+ 				$('#selectuser').children().remove().end();
+ 				addSpeakerToSelectBox("Select "," a option",0);
  				for(var i= 0; i< lstSpeaker.length; i++){
  					var item = lstSpeaker[i];
  					appendSpeakerToList(item.firstName, item.lastName, item.id);
+ 					addSpeakerToSelectBox(item.firstName, item.lastName, item.id);
  				}
+ 				$('#selectuser').val(0);
+ 				$('#selectuser').trigger("chosen:updated");
  				var lstReporter = response.data.members; // lay danh sach reporter trong room
  				$('#users').children().remove().end(); 
  				for(var i=0; i< lstReporter.length; i++){
@@ -859,6 +904,16 @@ lstUserIDRemoved= [];
  			console.log("Server error");
  		}
  	});
+ }
+
+ addSpeakerToSelectBox = function(firstName, lastName,id){
+ 	var nameShow = firstName+" "+ lastName;
+ 	var userOptionElement = document.createElement('option');
+ 	var userTextNode = document.createTextNode(nameShow);
+ 	userOptionElement.appendChild(userTextNode);
+ 	userOptionElement.setAttribute('value',id);
+ 	var lstUserSelect = document.querySelector('#selectuser');
+ 	lstUserSelect.appendChild(userOptionElement);
  }
 
  getTimeShow = function(time){
@@ -1177,6 +1232,13 @@ setPersmisson = function(){
 	$("#message").addClass("per_WRITE");
 	$("#btn_send").addClass("displayhidden");
 	$("#btn_send").addClass("per_WRITE");
+
+	$("#btn_start").addClass("displayhidden");
+	$("#btn_start").addClass("per_WRITE");
+
+	$("#btn_end").addClass("displayhidden");
+	$("#btn_end").addClass("per_WRITE");
+
 	
 	$("#btn_send_file").addClass("displayhidden");
 	$("#btn_send_file").addClass("per_WRITE");

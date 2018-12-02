@@ -198,25 +198,27 @@
 									<tr>
 										<th>Tên người dùng: </th>
 										<td colspan="3">
-											<select class="form-control" id="selectuser"></select>
+											<select class="form-control" id="selectuser">
+												<option value="0"></option>
+											</select>
 										</td>
 										<td></td>
 									</tr>
 									<tr >
 										<th>Thời gian từ: </th>
 										<td>
-											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="23">:
-											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59">:
-											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59">:
+											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="23" id="startH">:
+											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59" id="startM">:
+											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59" id="startS">:
 										</td>
 										<th>Thời gian đến: </th>
 										<td>
-											<input type="number" class="form-control"  style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="23">:
-											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59">:
-											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59">:
+											<input type="number" class="form-control"  style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="23" id="endH">:
+											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59" id="endM">:
+											<input type="number" class="form-control" style="width: 22%;font-size: 13px;padding: 1px;display: inline-block;" min="0" max="59" id="endS">:
 										</td>
 										<td style="text-align: center;">
-											<button class="btn btn-primary">
+											<button class="btn btn-primary" onclick="searchTranscript()">
 												<i class="fa fa-search" aria-hidden="true">													
 												</i>
 											</button>
