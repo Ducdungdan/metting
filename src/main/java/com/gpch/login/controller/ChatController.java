@@ -229,7 +229,10 @@ public class ChatController {
 					break;
 				}
   	    	  
-  	    	this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
+  	    	  if(message.getType()!=null) {
+  	    		  this.template.convertAndSend("/topic/"+(int)data.get("roomId"), message);
+  	    	  }
+  	    	  
   	      }
   	    
       return chatMessage;
