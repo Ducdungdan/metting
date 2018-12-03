@@ -37,7 +37,7 @@ $("#formupfile").submit(function(evt){
 			$('#popUploadFile').modal('hide');
 			var code = response.code;
 			if(code == 0){
-				getRoomInfor(roomID);
+				console.log("Upload file success !");
 				var fileSaveId = parseInt(response.data.id);
 				sendFile(fileSaveId);
 
@@ -861,6 +861,7 @@ lstUserIDRemoved= [];
  			var code = response.code;
  			var token = response.token;
  			if(code == 0){
+ 				console.log("Get roomInfor success !");
  				roomInfor = response.data;
  				$("#meeting_name").text(roomInfor.name);
  				var meetingStartTime = getTimeShow(new Date(roomInfor.createdDTG));
@@ -1045,7 +1046,7 @@ saveTimeSpeaker = function(){
 
 	}
 
-		$('#popEditTime').modal('hide');
+	$('#popEditTime').modal('hide');
 }
 
 
@@ -1184,7 +1185,7 @@ function onMessageReceived(payload) {
 		getRoomTranscript(); 
 	}else if(message.type === 'ADD_FILE'){
 		var content1 = message.data.newFile.name;
-		var createdDTG = parseInt(message.data.newFile.CreatedDTG);
+		var createdDTG = getTimeShow( new Date (message.data.newFile.CreatedDTG));
 		var rpFirstName = message.data.user.firstName;
 		var rpLastName = message.data.user.lastName;
 		var rpUserName = message.data.user.username;
@@ -1193,6 +1194,9 @@ function onMessageReceived(payload) {
 	}else if(message.type ==='PULL_TRANSCRIPT'){
 		getRoomTranscript();
 
+	}else if(message.type ==='PULL_SPEAKER'){
+		var roomID = GetURLParameter('roomID');
+		getRoomInfor(roomID);
 	}
 
 }
