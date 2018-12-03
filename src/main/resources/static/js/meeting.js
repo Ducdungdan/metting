@@ -996,17 +996,63 @@ showEndTime = function(){
 	startTimeSpeaker = new Date().getTime();
 	$("#btn_start").css("display","none");
 	$("#btn_end").css("display","inline");
+	$("#btn_start_edit").css("display","inline");
 
 }
 
 showStartTime = function(){
 	endTimeSpeaker = new Date().getTime();
 	$("#btn_end").css("display","none");
+	$("#btn_end_edit").css("display","inline");
 	$("#message").removeAttr('disabled');
 }
 
+// ------------ Edit time ------------
+
+showEndTimeEdit = function(type){
+	$("#typetime").val(type);
+	var hour = new Date(endTimeSpeaker).getHours();
+	var minute = new Date(endTimeSpeaker).getMinutes();
+	var seconds = new Date(endTimeSpeaker).getSeconds();
+	$('#hourEdit').val(hour);
+	$('#minuteEdit').val(minute);
+	$('#secondEdit').val(seconds);
+}
+
+showStartTimeEdit = function(type){
+	$("#typetime").val(type);
+	var hour = new Date(startTimeSpeaker).getHours();
+	var minute = new Date(startTimeSpeaker).getMinutes();
+	var seconds = new Date(startTimeSpeaker).getSeconds();
+	$('#hourEdit').val(hour);
+	$('#minuteEdit').val(minute);
+	$('#secondEdit').val(seconds);
+}
+
+saveTimeSpeaker = function(){
+	var type  = $("#typetime").val();
+	var hour = $('#hourEdit').val();
+	var minute = $('#minuteEdit').val();
+	var seconds = $('#secondEdit').val();
+	if (type == 0) {
+		var dateStart = new Date(startTimeSpeaker).setHours(hour,minute,seconds);
+		console.log(new Date(dateStart));
+		startTimeSpeaker = new Date(dateStart).getTime();
+	}else if(type == 1){
+		var dateEnd = new Date(endTimeSpeaker).setHours(hour,minute,seconds);
+		endTimeSpeaker = new Date(dateEnd).getTime();
+		console.log(dateEnd);
+
+	}
+
+		$('#popEditTime').modal('hide');
+}
+
+
 function sendMessage() {
 	$("#btn_start").css("display","inline");
+	$("#btn_start_edit").css("display","none");
+	$("#btn_end_edit").css("display","none");
 	$("#message").attr("disabled", true)
 	var speakerID = parseInt($("#hidSpeakerID").val());
 	var roomID = parseInt(GetURLParameter("roomID"));

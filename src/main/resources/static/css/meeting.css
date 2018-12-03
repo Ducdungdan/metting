@@ -256,16 +256,24 @@ body {
 		background: no-repeat;
 	}
 
+	.btn_time_edit {
+		width: 4%;
+		border: none;
+		background: no-repeat;
+		border: 1px solid grey;
+		border-radius: 50%;
+	}
+
 	.historyitem {
-	border-top: 1px solid darkgray;
-	border-bottom: 1px solid darkgray;
-	padding: 15px;
+		border-top: 1px solid darkgray;
+		border-bottom: 1px solid darkgray;
+		padding: 15px;
 	}
 	
 	.contentHistory {
-	height: 50px;
-    overflow: auto;
-    border: 0.5px solid antiquewhite;
-    padding: 4px;
-    margin-bottom: 6px;
+		height: 50px;
+		overflow: auto;
+		border: 0.5px solid antiquewhite;
+		padding: 4px;
+		margin-bottom: 6px;
 	}
