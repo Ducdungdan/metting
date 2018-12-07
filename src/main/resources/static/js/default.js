@@ -18,7 +18,16 @@ $(document).ready(function(){
 			if(code == 0){
 				listRoom = response.data;
 				listRoom.sort(function(a,b){
-					return - (a["active"] - b["active"]); 
+					if(a["active"] ==  b["active"]){
+						if(new Date(a["updatedDTG"]).getTime() >  new Date (b["updatedDTG"]).getTime()){
+							return -1;
+						}else {
+							return 0;
+						}
+					}else{
+						return - a["active"] +  b["active"]
+					}
+
 				});
 				console.log("Success");
 				loadData();
@@ -57,6 +66,7 @@ loadData = function(){
 		for (var j = 0; j < roles.length; j++) {
 			lstRolesName.push(roles[j].name);
 		}
+		console.log(JSON.stringify(lstRolesName));
 		addMettingRoom(id,number,time,name, JSON.stringify(lstRolesName),active);
 	}
 }
@@ -140,6 +150,10 @@ navigateToDetail = function(active,idroom, roles){
 	window.location.replace(url);
 }
 
+saveCookie = function(roles){
+	document.cookie = "roles="+roles;
+}
+
 // tao mot cuoc hop moi
 addRoom = function(){
 	var speakers = [];
@@ -157,6 +171,14 @@ addRoom = function(){
 				alert("Không được để trống tên, mô tả và số người sử dụng tối đa");
 			}else{
 				alert("Tạo mới cuộc họp thành công");
+				var roles = response.data.members[0].roles;
+				var lstRolesName = [];
+				for (var j = 0; j < roles.length; j++) {
+					lstRolesName.push(roles[j].name);
+				}
+				var rolesCookie = JSON.stringify(lstRolesName)+"";
+				saveCookie(lstRolesName);
+			
 				var url = "/meeting?roomID="+ response.data.id;
 				window.location.replace(url);
 			}
