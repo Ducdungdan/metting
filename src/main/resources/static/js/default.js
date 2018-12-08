@@ -179,7 +179,7 @@ addRoom = function(){
 				var rolesCookie = JSON.stringify(lstRolesName)+"";
 				saveCookie(lstRolesName);
 			
-				var url = "/meeting?roomID="+ response.data.id;
+				var url = "/meeting?roomID="+ response.data.id +"&active=1";
 				window.location.replace(url);
 			}
 			

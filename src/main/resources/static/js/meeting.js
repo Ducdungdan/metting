@@ -373,6 +373,9 @@ getRoomTranscript = function(){
 	var endTimeKey = convertDateToSecond(endH, endM, endS);
 	console.log(endTimeKey);
 
+	var speakerIDSearch = $("#selectuser").chosen().val();
+	
+	console.log(speakerIDSearch);
 
 	$.ajax({
 		url:'/api/room/get-room-transcripts',
@@ -383,8 +386,7 @@ getRoomTranscript = function(){
 		success: function(response){
 			var code = response.code;
 			if(code == 0){
-				var speakerIDSearch = $("#selectuser").chosen().val();
-				console.log(speakerIDSearch);
+				
 				var listTranscript = response.data;
 				$('.lstMessageMerge').children().remove().end(); 
 				for (var i = 0; i < listTranscript.length; i++) {
@@ -426,6 +428,7 @@ getRoomTranscript = function(){
 }
 
 searchTranscript = function(){
+
 	getRoomTranscript();
 }
 
