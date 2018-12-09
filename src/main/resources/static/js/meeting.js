@@ -803,6 +803,7 @@ lstUserIDRemoved= [];
  }
 
  loadPermission2PopupShareCode = function(){
+ 	$('#permissionShare').children().remove().end(); 
  	for (var i = 0; i < roleRooms.length; i++) {
  		addPermissionShare(roleRooms[i].value, roleRooms[i].name);
  	}

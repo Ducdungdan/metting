@@ -178,7 +178,7 @@ addRoom = function(){
 				}
 				var rolesCookie = JSON.stringify(lstRolesName)+"";
 				saveCookie(lstRolesName);
-			
+
 				var url = "/meeting?roomID="+ response.data.id +"&active=1";
 				window.location.replace(url);
 			}
@@ -211,7 +211,24 @@ joinMeeting = function(){
 				if(code == 0){
 					console.log("Success");
 					var roomID = response.data.id;
-					var url = "meeting?roomID="+roomID;
+					var lstMembers=  response.data.members;
+					var userN = getCookiebyName("username");
+					var roles = [];
+					for (var i = 0; i < lstMembers.length; i++) {
+						if(lstMembers[i].username == userN){
+							roles = lstMembers[i].roles;
+							break;
+						}
+					}
+
+					var lstRolesName = [];
+					for (var j = 0; j < roles.length; j++) {
+						lstRolesName.push(roles[j].name);
+					}
+					console.log(lstRolesName);
+					saveCookie(lstRolesName);
+
+					var url = "meeting?roomID="+roomID +"&active=1";
 					window.location.replace(url);
 					
 				}else {
