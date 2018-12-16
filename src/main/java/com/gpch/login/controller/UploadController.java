@@ -1,6 +1,7 @@
 package com.gpch.login.controller;
 
 import com.gpch.login.model.FileSave;
+import com.gpch.login.model.Room;
 import com.gpch.login.model.User;
 import com.gpch.login.service.FileService;
 import com.gpch.login.service.RoomService;
@@ -155,9 +156,12 @@ public class UploadController {
 
     @RequestMapping(value = "/doc/{roomId}", method = RequestMethod.GET)
     public ModelAndView genDoc(@PathVariable int roomId){
+        Map<String, Object> room = roomService.getRoom(roomId);
         String rootPath = System.getProperty("user.dir");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("report");
+        modelAndView.addObject("roomName", room.get("name"));
+        modelAndView.addObject("roomDescrip", room.get("description"));
         String path_export = rootPath + "/src/main/resources/reports/";
         //List<Vector<String>> datas = mergeFileExcelsUtil.merge(roomId);
         List<Map<String, Object>> datas = roomService.getRoomTranscript(roomId);

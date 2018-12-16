@@ -10,7 +10,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-6 text-center">
-				<p>Công ty cổ phần VFF</p>
+				<p th:text="${roomName}">Công ty cổ phần VFF</p>
 			</div>
 			<div class="col-sm-6 text-center">
 				<p>CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
@@ -19,14 +19,14 @@
 		</div>
 		<div class="row text-center">
 			<h1>BIÊN BẢN CUỘC HỌP</h1>
-			<h2>Về vấn đề hợp đồng lao động</h2>
+			<h2 th:text="${roomDescrip}"></h2>
 		</div>
 		<div class="content-report">
 			<!--<div class="row">-->
 				<!--<p>Thời gian bắt đầu: <span></span></p>-->
 			<!--</div>-->
 			<div class="row">
-				<p>Địa điểm: Phòng hội nghị Trung tâm VFF</p>
+				<p >Địa điểm: Văn phòng</p>
 			</div>
 			<div class="row">
 				<p>Thành phần tham dự: <span th:text="${spkStr}"></span></p>
